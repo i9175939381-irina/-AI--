@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Personal AI English Tutor — MVP</title>
+  <title>FluentBuddy — Your English Practice Coach</title>
   <!--
     ПРИМЕЧАНИЕ ДЛЯ РАЗРАБОТЧИКА (RU):
     Один файл: разметка, стили и логика. Нет внешних зависимостей и сервера.
@@ -13,7 +13,10 @@
   <style>
     /* ========== CSS-переменные: светлая современная тема ========== */
     :root {
-      --bg: #f4f6fb;
+      /* Subtle premium gradient (still readable in every section) */
+      --bg: radial-gradient(1200px circle at 10% 0%, rgba(61, 90, 254, 0.13), transparent 55%),
+            radial-gradient(900px circle at 100% 10%, rgba(13, 159, 76, 0.10), transparent 50%),
+            #f4f6fb;
       --surface: #ffffff;
       --surface-muted: #f0f3fa;
       --text: #1a1f2e;
@@ -129,6 +132,137 @@
 
     .card:hover {
       box-shadow: var(--shadow-hover);
+      transform: translateY(-1px);
+    }
+
+    /* ========== Hero + premium visuals ========== */
+    #intro-card {
+      position: relative;
+      overflow: hidden;
+      padding: 2.15rem 1.75rem;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(251, 252, 255, 1) 100%);
+    }
+
+    #intro-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background:
+        radial-gradient(600px circle at 10% 20%, rgba(61, 90, 254, 0.14), transparent 60%),
+        radial-gradient(520px circle at 90% 10%, rgba(13, 159, 76, 0.12), transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #intro-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.2rem;
+      align-items: start;
+    }
+
+    .hero-title {
+      font-size: 1.38rem;
+      line-height: 1.2;
+      margin: 0 0 0.75rem;
+    }
+
+    .hero-subtitle {
+      margin-bottom: 0.15rem;
+      max-width: 52ch;
+    }
+
+    .hero-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin: 1.15rem 0 1.1rem;
+    }
+
+    .hero-step {
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      padding: 0.75rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface-muted);
+    }
+
+    .hero-step__icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 1.05rem;
+      flex: 0 0 auto;
+      margin-top: 2px;
+    }
+
+    .hero-step__text strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .hero-step__text span {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .hero-side {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding-top: 0.2rem;
+    }
+
+    .side-card {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 0.95rem;
+      box-shadow: 0 14px 30px rgba(26, 31, 46, 0.06);
+    }
+
+    .side-card__title {
+      margin: 0 0 0.25rem;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+    }
+
+    .side-card__desc {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.35;
+    }
+
+    .hero-privacy {
+      margin: 0.95rem 0 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 0.1rem;
+    }
+
+    .setup-col {
+      min-width: 0;
     }
 
     .card__title {
@@ -491,6 +625,22 @@
         padding: 1.1rem 1.15rem;
       }
 
+      #intro-card {
+        padding: 1.65rem 1.15rem;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-side {
+        padding-top: 0;
+      }
+
+      .setup-grid {
+        grid-template-columns: 1fr;
+      }
+
       .app-main {
         padding-left: 1rem;
         padding-right: 1rem;
@@ -503,52 +653,106 @@
   <header class="app-header" role="banner">
     <div class="app-header__inner">
       <div class="app-header__brand">
-        <h1 class="app-header__title">Personal AI English Tutor</h1>
-        <p class="app-header__tagline">Practice, feedback, and micro-drills — MVP prototype</p>
+        <h1 class="app-header__title">FluentBuddy</h1>
+        <p class="app-header__tagline">Friendly English practice — built to feel like a coach.</p>
       </div>
-      <span class="app-header__badge" aria-hidden="true">Offline tutor</span>
+      <span class="app-header__badge" aria-hidden="true">On-device coach</span>
     </div>
   </header>
 
   <main class="app-main" id="main">
     <!-- ========== INTRO CARD ========== -->
-    <section class="card" id="intro-card" aria-labelledby="intro-title">
-      <div class="intro-highlight" aria-hidden="true">✦ Session-based practice</div>
-      <h2 class="card__title" id="intro-title">Welcome to your personal tutor</h2>
-      <p class="card__subtitle">
-        Pick your level, choose how you want to start, and get structured feedback. This build uses smart rules and templates
-        (no cloud AI) — perfect for testing the learning flow.
-      </p>
-      <ul class="intro-list">
-        <li>Three start modes: your own text, a daily question, or a quick mini exercise</li>
-        <li>Clear improved version, mistake notes, and phrasing tips</li>
-        <li>Optional follow-ups and a short drill linked to your last review</li>
-      </ul>
-      <button type="button" class="btn btn--primary" id="btn-scroll-setup" aria-controls="setup-card">
-        Set up your session
-      </button>
+    <section class="card hero-card" id="intro-card" aria-labelledby="intro-title">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="intro-highlight" aria-hidden="true">
+            <span class="hero-emoji" aria-hidden="true">🧠</span>
+            Personal feedback, one message at a time
+          </div>
+
+          <h2 class="card__title hero-title" id="intro-title">
+            Write in English. Get clear feedback. Improve fast.
+          </h2>
+
+          <p class="card__subtitle hero-subtitle">
+            Choose your level, answer one prompt, and receive an improved version with “why it matters”.
+            Then you’ll practice the same correction in a quick mini drill.
+          </p>
+
+          <div class="hero-steps" aria-label="How it works">
+            <div class="hero-step">
+              <div class="hero-step__icon" aria-hidden="true">✍️</div>
+              <div class="hero-step__text">
+                <strong>Write</strong>
+                <span>Your message in English</span>
+              </div>
+            </div>
+            <div class="hero-step">
+              <div class="hero-step__icon" aria-hidden="true">✅</div>
+              <div class="hero-step__text">
+                <strong>Review</strong>
+                <span>Improvements + key mistakes</span>
+              </div>
+            </div>
+            <div class="hero-step">
+              <div class="hero-step__icon" aria-hidden="true">🎯</div>
+              <div class="hero-step__text">
+                <strong>Practice</strong>
+                <span>A short drill linked to you</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn--primary" id="btn-scroll-setup" aria-controls="setup-card">
+            Start my first practice
+          </button>
+
+          <p class="hero-privacy">
+            Works fully in your browser — no accounts, no external calls.
+          </p>
+        </div>
+
+        <aside class="hero-side" aria-label="What you get">
+          <div class="side-card">
+            <div class="side-card__title">Improved version</div>
+            <p class="side-card__desc">A cleaner rewrite you can copy right away.</p>
+          </div>
+          <div class="side-card">
+            <div class="side-card__title">Mistakes & why</div>
+            <p class="side-card__desc">Simple explanations that you can actually remember.</p>
+          </div>
+          <div class="side-card">
+            <div class="side-card__title">Better phrasing</div>
+            <p class="side-card__desc">Ready-to-use patterns for the next time.</p>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <!-- ========== LEVEL + MODE (setup) ========== -->
     <section class="card" id="setup-card" aria-labelledby="setup-title">
-      <h2 class="card__title" id="setup-title">Your level &amp; start mode</h2>
-      <p class="card__subtitle">Choose what matches you today. You can change this anytime.</p>
+      <h2 class="card__title" id="setup-title">Set up your practice</h2>
+      <p class="card__subtitle">
+        Pick your level and how you want to start. We’ll turn your answer into a helpful correction — then lock it in with a mini drill.
+      </p>
 
-      <div style="margin-bottom: 1.25rem">
-        <span class="field-label" id="level-label">Level</span>
-        <div id="chip-group-level" class="chip-group" role="group" aria-labelledby="level-label">
-          <button type="button" class="chip" data-level="beginner" aria-pressed="false">Beginner</button>
-          <button type="button" class="chip" data-level="intermediate" aria-pressed="false">Intermediate</button>
-          <button type="button" class="chip" data-level="advanced" aria-pressed="false">Advanced</button>
+      <div class="setup-grid">
+        <div class="setup-col">
+          <span class="field-label" id="level-label">Level</span>
+          <div id="chip-group-level" class="chip-group" role="group" aria-labelledby="level-label">
+            <button type="button" class="chip" data-level="beginner" aria-pressed="false">Beginner</button>
+            <button type="button" class="chip" data-level="intermediate" aria-pressed="false">Intermediate</button>
+            <button type="button" class="chip" data-level="advanced" aria-pressed="false">Advanced</button>
+          </div>
         </div>
-      </div>
 
-      <div>
-        <span class="field-label" id="mode-label">Start mode</span>
-        <div id="chip-group-mode" class="chip-group" role="group" aria-labelledby="mode-label">
-          <button type="button" class="chip" data-mode="own" aria-pressed="false">Write my own text</button>
-          <button type="button" class="chip" data-mode="daily" aria-pressed="false">Daily question</button>
-          <button type="button" class="chip" data-mode="mini" aria-pressed="false">Mini exercise</button>
+        <div class="setup-col">
+          <span class="field-label" id="mode-label">Start mode</span>
+          <div id="chip-group-mode" class="chip-group" role="group" aria-labelledby="mode-label">
+            <button type="button" class="chip" data-mode="own" aria-pressed="false">Write my own text</button>
+            <button type="button" class="chip" data-mode="daily" aria-pressed="false">Daily question</button>
+            <button type="button" class="chip" data-mode="mini" aria-pressed="false">Mini exercise</button>
+          </div>
         </div>
       </div>
       <p class="hint-bar" id="setup-hint" role="status"></p>
@@ -556,11 +760,11 @@
 
     <!-- ========== INPUT AREA ========== -->
     <section class="card" id="workspace-card" aria-labelledby="workspace-title">
-      <h2 class="card__title" id="workspace-title">Your answer</h2>
-      <p class="card__subtitle" id="workspace-desc">Write in English. When you are ready, run a review.</p>
+      <h2 class="card__title" id="workspace-title">Your English practice</h2>
+      <p class="card__subtitle" id="workspace-desc">Type your message in English. Then get a clear, friendly review.</p>
 
       <div id="prompt-container" class="prompt-box is-hidden" aria-live="polite">
-        <strong id="prompt-label">Prompt</strong>
+        <strong id="prompt-label">Today’s prompt</strong>
         <span id="prompt-text"></span>
       </div>
 
@@ -568,23 +772,23 @@
       <textarea
         id="user-input"
         class="input-text"
-        placeholder="Type your English here…"
+        placeholder="Type your answer here…"
         autocomplete="off"
         spellcheck="true"
       ></textarea>
 
       <div class="btn-row">
-        <button type="button" class="btn btn--primary" id="btn-review" disabled>Check &amp; review</button>
-        <button type="button" class="btn btn--secondary" id="btn-clear-input">Clear input</button>
-        <button type="button" class="btn btn--ghost" id="btn-new-daily" type="button">New daily question</button>
+        <button type="button" class="btn btn--primary" id="btn-review" disabled>Get feedback</button>
+        <button type="button" class="btn btn--secondary" id="btn-clear-input">Clear</button>
+        <button type="button" class="btn btn--ghost" id="btn-new-daily" type="button">New daily prompt</button>
       </div>
       <p class="hint-bar" id="input-hint" role="status"></p>
     </section>
 
     <!-- ========== FEEDBACK / RESULT CARD ========== -->
     <section class="card is-hidden" id="result-card" aria-labelledby="result-title" aria-live="polite">
-      <h2 class="card__title" id="result-title">Review</h2>
-      <p class="card__subtitle">Here is a tutor-style breakdown of your text.</p>
+      <h2 class="card__title" id="result-title">Tutor feedback</h2>
+      <p class="card__subtitle">An improved version, key mistakes, and better phrasing you can reuse.</p>
 
       <div id="result-body">
         <div class="result-section">
@@ -592,7 +796,7 @@
           <div class="improved-text" id="out-improved"></div>
         </div>
         <div class="result-section">
-          <h4>Mistakes &amp; explanations</h4>
+          <h4>Mistakes &amp; why</h4>
           <div id="out-mistakes"></div>
         </div>
         <div class="result-section">
@@ -602,9 +806,9 @@
       </div>
 
       <div class="btn-row" id="continuation-row">
-        <button type="button" class="btn btn--secondary" id="btn-explain-more">Explain more</button>
-        <button type="button" class="btn btn--secondary" id="btn-give-example">Give example</button>
-        <button type="button" class="btn btn--secondary" id="btn-practice-mistake">Practice this mistake</button>
+        <button type="button" class="btn btn--secondary" id="btn-explain-more">Explain the rule</button>
+        <button type="button" class="btn btn--secondary" id="btn-give-example">Show an example</button>
+        <button type="button" class="btn btn--secondary" id="btn-practice-mistake">Practice this correction</button>
       </div>
 
       <div class="continuation-panel" id="panel-explain" role="region" aria-label="Extended explanation"></div>
@@ -613,17 +817,17 @@
 
     <!-- ========== MINI EXERCISE CARD ========== -->
     <section class="card is-hidden" id="mini-card" aria-labelledby="mini-title">
-      <h2 class="card__title" id="mini-title">Mini exercise</h2>
-      <p class="card__subtitle" id="mini-desc">Short drill based on your last review (simulated tutor).</p>
+      <h2 class="card__title" id="mini-title">Quick mini drill</h2>
+      <p class="card__subtitle" id="mini-desc">One short exercise to lock the correction in.</p>
       <div class="prompt-box" id="mini-prompt-box">
-        <strong>Task</strong>
+        <strong>Exercise</strong>
         <span id="mini-question"></span>
       </div>
       <label for="mini-input" class="visually-hidden">Mini exercise answer</label>
-      <textarea id="mini-input" class="input-text input-text--mini" placeholder="Your answer…"></textarea>
+      <textarea id="mini-input" class="input-text input-text--mini" placeholder="Your answer… (in English)"></textarea>
       <div class="btn-row">
-        <button type="button" class="btn btn--primary" id="btn-check-mini">Check mini exercise</button>
-        <button type="button" class="btn btn--secondary" id="btn-skip-mini">Skip</button>
+        <button type="button" class="btn btn--primary" id="btn-check-mini">Check</button>
+        <button type="button" class="btn btn--secondary" id="btn-skip-mini">Not now</button>
       </div>
       <p class="hint-bar" id="mini-feedback" role="status"></p>
     </section>
@@ -633,22 +837,22 @@
       <h2 class="card__title" id="progress-title" style="width: 100%; margin-bottom: 0">Session progress</h2>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-session-steps">0</div>
-        <div class="progress-stat__label">Steps completed (this session)</div>
+        <div class="progress-stat__label">Practice runs (this session)</div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-session-ex">0</div>
-        <div class="progress-stat__label">Exercises completed (this session)</div>
+        <div class="progress-stat__label">Mini drills completed (this session)</div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-total-steps">0</div>
-        <div class="progress-stat__label">All-time steps (saved)</div>
+        <div class="progress-stat__label">Total practice runs (saved)</div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-total-ex">0</div>
-        <div class="progress-stat__label">All-time exercises (saved)</div>
+        <div class="progress-stat__label">Total mini drills (saved)</div>
       </div>
       <p class="progress-hint">
-        Level and lifetime totals are stored in <code>localStorage</code> on this device. Session counters reset when you reload the page.
+        Your level and totals are saved on this device. Session counters reset when you refresh.
       </p>
     </section>
   </main>
@@ -929,9 +1133,15 @@
         if (!original.length) {
           return {
             improved: '',
-            mistakes: [{ title: 'Empty answer', explanation: 'Write at least one sentence so the tutor can help you.' }],
+            mistakes: [
+              {
+                title: 'No text yet',
+                explanation:
+                  'Type at least one short sentence in English. Your tutor will rewrite it and highlight the key fix.'
+              }
+            ],
             mistakeTypes: ['empty'],
-            phrasing: 'Start with a simple sentence about your day or your goal — short is fine.',
+            phrasing: 'Start with one simple sentence about your day or your goal — short is perfect.',
           };
         }
 
@@ -1147,8 +1357,8 @@
         el.miniCard.classList.remove('is-hidden');
         el.miniCard.dataset.answers = JSON.stringify(task.answers);
         el.miniDesc.textContent = fromStandalone
-          ? 'Standalone quick drill — no review required.'
-          : 'Based on your last review, try this short task.';
+          ? 'Quick drill — no review needed.'
+          : 'Based on your last review, try this short drill.';
         el.miniCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
@@ -1176,12 +1386,12 @@
           }
         }
         if (ok) {
-          el.miniFeedback.textContent = 'Nice work — that matches the target pattern.';
+          el.miniFeedback.textContent = 'Great! Your answer matches the pattern.';
           el.miniFeedback.style.color = 'var(--success)';
           addExerciseDone();
           addStep(1);
         } else {
-          el.miniFeedback.textContent = 'Not quite yet. Compare your answer with the hint and try a small revision.';
+          el.miniFeedback.textContent = 'Close — compare it with the task and try one small revision.';
           el.miniFeedback.style.color = 'var(--warning)';
         }
       }
@@ -1210,7 +1420,7 @@
       function runReview() {
         el.inputHint.textContent = '';
         if (!state.level || !state.mode) {
-          el.setupHint.textContent = 'Please choose both a level and a start mode.';
+          el.setupHint.textContent = 'Pick your level and start mode, then tap “Get feedback”.';
           el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           return;
         }
@@ -1240,23 +1450,25 @@
       function applyModeUI() {
         el.promptContainer.classList.add('is-hidden');
         el.btnNewDaily.classList.add('is-hidden');
-        el.userInput.placeholder = 'Type your English here…';
+        el.userInput.placeholder = 'Type your answer here…';
 
         if (state.mode === 'own') {
-          el.workspaceDesc.textContent = 'Write anything you want to practice: an email snippet, diary entry, or answer to a prompt you imagine.';
+          el.workspaceDesc.textContent =
+            'Write what you want to say (a message, diary, or a note). Then get a friendly correction.';
         } else if (state.mode === 'daily') {
           var item = DAILY_QUESTIONS[state.dailyIndex];
           el.promptContainer.classList.remove('is-hidden');
           el.promptText.textContent = item.q + ' ' + item.hint;
-          el.workspaceDesc.textContent = 'Answer the daily question in English.';
+          el.workspaceDesc.textContent = 'Answer today’s question in English — simple is fine.';
           el.btnNewDaily.classList.remove('is-hidden');
         } else if (state.mode === 'mini') {
-          el.workspaceDesc.textContent = 'Solve the mini exercise below, then optionally write a follow-up sentence.';
+          el.workspaceDesc.textContent =
+            'Do the mini exercise below. If you want, add one short follow-up sentence and get extra feedback.';
           var pool = MINI_POOL_BY_LEVEL[state.level] || MINI_POOL_BY_LEVEL.intermediate;
           var task = pool[Math.floor(Math.random() * pool.length)];
           el.promptContainer.classList.remove('is-hidden');
           el.promptText.textContent = task.q;
-          el.userInput.placeholder = 'Optional: add a short related sentence in English…';
+          el.userInput.placeholder = 'Optional: add one related sentence in English…';
         }
       }
 
