@@ -689,6 +689,46 @@
       color: var(--text-muted);
     }
 
+    .debug-metrics {
+      margin-top: 0.9rem;
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .debug-metrics details {
+      user-select: none;
+    }
+
+    .debug-metrics summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text-muted);
+      list-style: none;
+    }
+
+    .debug-metrics summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .debug-metrics__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-top: 0.6rem;
+    }
+
+    .debug-metrics__item {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.6rem 0.7rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+
     /* ========== Скрытые блоки до появления данных ========== */
     .is-hidden {
       display: none !important;
@@ -1016,6 +1056,16 @@
       <p class="progress-hint">
         Your level and totals are saved on this device. Session counters reset when you refresh.
       </p>
+
+      <div class="debug-metrics" aria-hidden="true">
+        <details>
+          <summary>Debug metrics</summary>
+          <div class="debug-metrics__grid">
+            <div class="debug-metrics__item">answer_submitted: <span id="m-answer-submitted">0</span></div>
+            <div class="debug-metrics__item">loop_completed: <span id="m-loop-completed">0</span></div>
+          </div>
+        </details>
+      </div>
     </section>
   </main>
 
@@ -1031,6 +1081,8 @@
       var LS_TOTAL_STEPS = 'englishTutor_totalSteps';
       var LS_TOTAL_EX = 'englishTutor_totalExercises';
       var LS_DAILY_INDEX = 'englishTutor_dailyIndex';
+      var LS_METRIC_ANSWER_SUBMITTED = 'englishTutor_metric_answer_submitted';
+      var LS_METRIC_LOOP_COMPLETED = 'englishTutor_metric_loop_completed';
 
       /* ========================================================================
          Данные: ежедневные вопросы (короткий ответ на английском)
@@ -1139,6 +1191,9 @@
         autoContinueInterval: null,
         afterReviewInteracted: false,
         followUpCounter: 0,
+        metricAnswerSubmitted: 0,
+        metricLoopCompleted: 0,
+        loopEligible: false,
       };
 
       /* ========================================================================
@@ -1173,6 +1228,34 @@
         state.totalSteps = readInt(LS_TOTAL_STEPS, 0);
         state.totalExercises = readInt(LS_TOTAL_EX, 0);
         state.dailyIndex = readInt(LS_DAILY_INDEX, 0) % DAILY_QUESTIONS.length;
+        state.metricAnswerSubmitted = readInt(LS_METRIC_ANSWER_SUBMITTED, 0);
+        state.metricLoopCompleted = readInt(LS_METRIC_LOOP_COMPLETED, 0);
+      }
+
+      function saveMetrics() {
+        localStorage.setItem(LS_METRIC_ANSWER_SUBMITTED, String(state.metricAnswerSubmitted));
+        localStorage.setItem(LS_METRIC_LOOP_COMPLETED, String(state.metricLoopCompleted));
+      }
+
+      function renderMetrics() {
+        if (el.mAnswerSubmitted) el.mAnswerSubmitted.textContent = String(state.metricAnswerSubmitted);
+        if (el.mLoopCompleted) el.mLoopCompleted.textContent = String(state.metricLoopCompleted);
+      }
+
+      function incMetricAnswerSubmitted() {
+        state.metricAnswerSubmitted += 1;
+        saveMetrics();
+        renderMetrics();
+        console.log('[metrics]', 'answer_submitted =', state.metricAnswerSubmitted);
+      }
+
+      function markLoopCompleted(reason) {
+        if (!state.loopEligible) return;
+        state.loopEligible = false;
+        state.metricLoopCompleted += 1;
+        saveMetrics();
+        renderMetrics();
+        console.log('[metrics]', 'loop_completed =', state.metricLoopCompleted, '| reason:', reason);
       }
 
       /* ========================================================================
@@ -1207,6 +1290,8 @@
         btnContinueFollowup: document.getElementById('btn-continue-followup'),
         btnContinuePractice: document.getElementById('btn-continue-practice'),
         continueAutoNote: document.getElementById('continue-auto-note'),
+        mAnswerSubmitted: document.getElementById('m-answer-submitted'),
+        mLoopCompleted: document.getElementById('m-loop-completed'),
         miniCard: document.getElementById('mini-card'),
         miniQuestion: document.getElementById('mini-question'),
         miniInput: document.getElementById('mini-input'),
@@ -1342,6 +1427,7 @@
       }
 
       function startSimilarSentenceFlow() {
+        markLoopCompleted('continue_similar_button');
         state.afterReviewInteracted = true;
         clearAutoContinue();
         el.promptContainer.classList.remove('is-hidden');
@@ -1352,6 +1438,7 @@
       }
 
       function startFollowUpFlow() {
+        markLoopCompleted('continue_followup_question');
         state.afterReviewInteracted = true;
         clearAutoContinue();
         var q = buildFollowUpQuestion();
@@ -1363,6 +1450,7 @@
       }
 
       function startPracticeAgainFlow() {
+        markLoopCompleted('continue_practice_again');
         state.afterReviewInteracted = true;
         clearAutoContinue();
         if (!state.level) return;
@@ -1665,6 +1753,7 @@
           el.miniFeedback.style.color = 'var(--success)';
           addExerciseDone();
           addStep(1);
+          markLoopCompleted('mini_exercise_answered_correct');
           el.nextStepNote.textContent = 'Nice! Next step: answer a follow-up question or try another sentence.';
           state.afterReviewInteracted = false;
           scheduleAutoContinue();
@@ -1714,6 +1803,11 @@
 
         var text = el.userInput.value;
 
+        /* Метрика: пользователь реально отправил ответ на проверку */
+        incMetricAnswerSubmitted();
+        /* Если на прошлом шаге был фидбек и пользователь снова отправляет — значит loop состоялся */
+        markLoopCompleted('submitted_after_feedback');
+
         /* Мини-loader: имитация «живого анализа» перед выдачей результата */
         var loaderPhrases = ['Analyzing your sentence…', 'Improving your English…'];
         var phraseIndex = 0;
@@ -1758,6 +1852,9 @@
 
           el.resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           scheduleAutoContinue();
+
+          /* После показа фидбека начинаем ждать следующий шаг пользователя */
+          state.loopEligible = true;
 
           addStep(1);
         }, waitMs);
@@ -1903,6 +2000,7 @@
       function init() {
         loadStored();
         renderProgress();
+        renderMetrics();
 
         if (state.level) {
           setChipActive('#chip-group-level', 'data-level', state.level);
