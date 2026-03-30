@@ -467,6 +467,42 @@
       transform: scale(0.98);
     }
 
+    .loader-line {
+      margin-top: 0.75rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .loader-line.is-visible {
+      display: inline-flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .loader-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 14px 0 0 rgba(61, 90, 254, 0.55), 28px 0 0 rgba(61, 90, 254, 0.3);
+      animation: pulseDots 1s ease-in-out infinite;
+      margin-right: 1.7rem;
+      flex: 0 0 auto;
+    }
+
+    @keyframes pulseDots {
+      0%, 100% {
+        transform: translateX(0);
+        opacity: 0.9;
+      }
+      50% {
+        transform: translateX(2px);
+        opacity: 0.55;
+      }
+    }
+
     /* ========== Результаты разбора ========== */
     .result-block {
       margin-top: 1rem;
@@ -520,6 +556,21 @@
       margin-bottom: 0;
     }
 
+    .mistake-item--highlight {
+      animation: softErrorGlow 1.6s ease;
+    }
+
+    @keyframes softErrorGlow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(194, 122, 0, 0.22);
+        background: rgba(194, 122, 0, 0.22);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(194, 122, 0, 0);
+        background: var(--warning-soft);
+      }
+    }
+
     .phrasing-tip {
       font-size: 0.95rem;
       color: var(--text);
@@ -543,6 +594,99 @@
     .continuation-panel.is-visible {
       display: block;
       animation: fadeIn 0.3s ease;
+    }
+
+    .result-entrance {
+      animation: resultSlideIn 0.35s ease;
+    }
+
+    @keyframes resultSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result-transition-note {
+      margin: 0.15rem 0 0.85rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .result-transition-note.is-visible {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .reaction-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      margin-bottom: 0.65rem;
+      border: 1px solid var(--border);
+      background: var(--surface-muted);
+      color: var(--text);
+    }
+
+    .reaction-chip--good {
+      color: var(--success);
+      border-color: rgba(13, 159, 76, 0.3);
+      background: var(--success-soft);
+    }
+
+    .reaction-chip--almost {
+      color: #6d56ff;
+      border-color: rgba(109, 86, 255, 0.3);
+      background: rgba(109, 86, 255, 0.1);
+    }
+
+    .reaction-chip--try {
+      color: var(--warning);
+      border-color: rgba(194, 122, 0, 0.3);
+      background: var(--warning-soft);
+    }
+
+    .next-step-note {
+      margin: 0.35rem 0 1rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .continue-learning {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface-muted);
+    }
+
+    .continue-learning__title {
+      margin: 0 0 0.4rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .continue-learning__hint {
+      margin: 0 0 0.75rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .continue-learning__auto {
+      margin: 0.65rem 0 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
     /* ========== Скрытые блоки до появления данных ========== */
@@ -782,6 +926,10 @@
         <button type="button" class="btn btn--secondary" id="btn-clear-input">Clear</button>
         <button type="button" class="btn btn--ghost" id="btn-new-daily" type="button">New daily prompt</button>
       </div>
+      <div class="loader-line" id="review-loader" aria-live="polite">
+        <span class="loader-dot" aria-hidden="true"></span>
+        <span id="review-loader-text">Analyzing your sentence…</span>
+      </div>
       <p class="hint-bar" id="input-hint" role="status"></p>
     </section>
 
@@ -789,6 +937,9 @@
     <section class="card is-hidden" id="result-card" aria-labelledby="result-title" aria-live="polite">
       <h2 class="card__title" id="result-title">Tutor feedback</h2>
       <p class="card__subtitle">An improved version, key mistakes, and better phrasing you can reuse.</p>
+      <p class="result-transition-note" id="result-transition-note">Nice! Here’s what I found 👇</p>
+      <div class="reaction-chip" id="result-reaction" aria-live="polite">🙂 Nice try — keep going.</div>
+      <p class="next-step-note" id="next-step-note">Next step: practice the same pattern once more.</p>
 
       <div id="result-body">
         <div class="result-section">
@@ -813,6 +964,17 @@
 
       <div class="continuation-panel" id="panel-explain" role="region" aria-label="Extended explanation"></div>
       <div class="continuation-panel" id="panel-example" role="region" aria-label="Example sentences"></div>
+
+      <div class="continue-learning" id="continue-learning-block">
+        <p class="continue-learning__title">Continue learning</p>
+        <p class="continue-learning__hint">Choose your next move, or we’ll continue automatically.</p>
+        <div class="btn-row" id="continue-learning-row">
+          <button type="button" class="btn btn--secondary" id="btn-continue-similar">Try another similar sentence</button>
+          <button type="button" class="btn btn--secondary" id="btn-continue-followup">Answer a follow-up question</button>
+          <button type="button" class="btn btn--secondary" id="btn-continue-practice">Practice this mistake again</button>
+        </div>
+        <p class="continue-learning__auto" id="continue-auto-note">Auto-continue in 8s if no action.</p>
+      </div>
     </section>
 
     <!-- ========== MINI EXERCISE CARD ========== -->
@@ -973,6 +1135,10 @@
           practice: false,
         },
         miniStandalone: false,
+        autoContinueTimer: null,
+        autoContinueInterval: null,
+        afterReviewInteracted: false,
+        followUpCounter: 0,
       };
 
       /* ========================================================================
@@ -1019,9 +1185,12 @@
         btnReview: document.getElementById('btn-review'),
         btnClearInput: document.getElementById('btn-clear-input'),
         btnNewDaily: document.getElementById('btn-new-daily'),
+        reviewLoader: document.getElementById('review-loader'),
+        reviewLoaderText: document.getElementById('review-loader-text'),
         promptContainer: document.getElementById('prompt-container'),
         promptText: document.getElementById('prompt-text'),
         workspaceDesc: document.getElementById('workspace-desc'),
+        workspaceCard: document.getElementById('workspace-card'),
         resultCard: document.getElementById('result-card'),
         outImproved: document.getElementById('out-improved'),
         outMistakes: document.getElementById('out-mistakes'),
@@ -1031,6 +1200,13 @@
         btnPractice: document.getElementById('btn-practice-mistake'),
         panelExplain: document.getElementById('panel-explain'),
         panelExample: document.getElementById('panel-example'),
+        resultTransitionNote: document.getElementById('result-transition-note'),
+        resultReaction: document.getElementById('result-reaction'),
+        nextStepNote: document.getElementById('next-step-note'),
+        btnContinueSimilar: document.getElementById('btn-continue-similar'),
+        btnContinueFollowup: document.getElementById('btn-continue-followup'),
+        btnContinuePractice: document.getElementById('btn-continue-practice'),
+        continueAutoNote: document.getElementById('continue-auto-note'),
         miniCard: document.getElementById('mini-card'),
         miniQuestion: document.getElementById('mini-question'),
         miniInput: document.getElementById('mini-input'),
@@ -1114,6 +1290,105 @@
         el.btnExplain.disabled = false;
         el.btnExample.disabled = false;
         el.btnPractice.disabled = false;
+      }
+
+      function clearAutoContinue() {
+        if (state.autoContinueTimer) {
+          clearTimeout(state.autoContinueTimer);
+          state.autoContinueTimer = null;
+        }
+        if (state.autoContinueInterval) {
+          clearInterval(state.autoContinueInterval);
+          state.autoContinueInterval = null;
+        }
+        el.continueAutoNote.textContent = 'Auto-continue paused.';
+      }
+
+      function setReactionByResult(result) {
+        var score = result.mistakes.length;
+        var text = '🙂 Nice try — keep going.';
+        var cls = 'reaction-chip reaction-chip--try';
+
+        if (score <= 1) {
+          text = '🎉 Good — your message is clear.';
+          cls = 'reaction-chip reaction-chip--good';
+        } else if (score <= 3) {
+          text = '👍 Almost there — just a couple of fixes.';
+          cls = 'reaction-chip reaction-chip--almost';
+        }
+
+        el.resultReaction.className = cls;
+        el.resultReaction.textContent = text;
+      }
+
+      function buildFollowUpQuestion() {
+        state.followUpCounter += 1;
+        var suggestions = {
+          beginner: [
+            'Write one more sentence about your routine using because.',
+            'Describe what you will do tonight in one simple sentence.',
+          ],
+          intermediate: [
+            'Write a follow-up sentence using “I would like to…” in a polite tone.',
+            'Add one sentence with a clear time marker (already, recently, yet).',
+          ],
+          advanced: [
+            'Write one concise sentence with a more formal tone for work context.',
+            'Add a follow-up sentence with a nuanced suggestion (might / could).',
+          ],
+        };
+        var bucket = suggestions[state.level] || suggestions.intermediate;
+        return bucket[state.followUpCounter % bucket.length];
+      }
+
+      function startSimilarSentenceFlow() {
+        state.afterReviewInteracted = true;
+        clearAutoContinue();
+        el.promptContainer.classList.remove('is-hidden');
+        el.promptText.textContent = 'Try another sentence on the same idea. Keep it short and improve one thing.';
+        el.userInput.value = '';
+        el.userInput.focus();
+        el.workspaceCard && el.workspaceCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function startFollowUpFlow() {
+        state.afterReviewInteracted = true;
+        clearAutoContinue();
+        var q = buildFollowUpQuestion();
+        el.promptContainer.classList.remove('is-hidden');
+        el.promptText.textContent = q;
+        el.userInput.value = '';
+        el.userInput.focus();
+        el.nextStepNote.textContent = 'Next step: answer the follow-up question, then get feedback again.';
+      }
+
+      function startPracticeAgainFlow() {
+        state.afterReviewInteracted = true;
+        clearAutoContinue();
+        if (!state.level) return;
+        var task = pickMiniExercise(state.level, state.mistakeTypes);
+        showMiniExercise(task, false);
+        el.nextStepNote.textContent = 'Next step: complete the mini drill, then write one more sentence.';
+      }
+
+      function scheduleAutoContinue() {
+        clearAutoContinue();
+        var secondsLeft = 8;
+        el.continueAutoNote.textContent = 'Auto-continue in ' + secondsLeft + 's if no action.';
+
+        state.autoContinueInterval = setInterval(function () {
+          secondsLeft -= 1;
+          if (secondsLeft > 0) {
+            el.continueAutoNote.textContent = 'Auto-continue in ' + secondsLeft + 's if no action.';
+          }
+        }, 1000);
+
+        state.autoContinueTimer = setTimeout(function () {
+          if (state.afterReviewInteracted) return;
+          clearAutoContinue();
+          startFollowUpFlow();
+          el.continueAutoNote.textContent = 'Auto-continued with a follow-up question.';
+        }, 8000);
       }
 
       /* ========================================================================
@@ -1390,9 +1665,13 @@
           el.miniFeedback.style.color = 'var(--success)';
           addExerciseDone();
           addStep(1);
+          el.nextStepNote.textContent = 'Nice! Next step: answer a follow-up question or try another sentence.';
+          state.afterReviewInteracted = false;
+          scheduleAutoContinue();
         } else {
           el.miniFeedback.textContent = 'Close — compare it with the task and try one small revision.';
           el.miniFeedback.style.color = 'var(--warning)';
+          el.nextStepNote.textContent = 'Next step: revise this mini drill once more.';
         }
       }
 
@@ -1401,11 +1680,18 @@
          ======================================================================== */
       function renderMistakes(mistakes) {
         el.outMistakes.innerHTML = '';
-        mistakes.forEach(function (m) {
+        mistakes.forEach(function (m, index) {
           var div = document.createElement('div');
           div.className = 'mistake-item';
           div.innerHTML = '<strong>' + escapeHtml(m.title) + '</strong><br />' + escapeHtml(m.explanation);
           el.outMistakes.appendChild(div);
+          /* Мягкая поочередная подсветка ошибок на старте (не агрессивно) */
+          setTimeout(function () {
+            div.classList.add('mistake-item--highlight');
+          }, index * 110);
+          setTimeout(function () {
+            div.classList.remove('mistake-item--highlight');
+          }, 1900 + index * 110);
         });
       }
 
@@ -1427,21 +1713,54 @@
         el.setupHint.textContent = '';
 
         var text = el.userInput.value;
-        var result = analyzeEnglish(text, state.level);
 
-        state.lastOriginal = text;
-        state.lastImproved = result.improved;
-        state.mistakeTypes = result.mistakeTypes.slice();
+        /* Мини-loader: имитация «живого анализа» перед выдачей результата */
+        var loaderPhrases = ['Analyzing your sentence…', 'Improving your English…'];
+        var phraseIndex = 0;
+        var waitMs = 800 + Math.floor(Math.random() * 701); // 0.8–1.5s
+        el.btnReview.disabled = true;
+        el.reviewLoader.classList.add('is-visible');
+        el.reviewLoaderText.textContent = loaderPhrases[0];
+        var loaderSwap = setInterval(function () {
+          phraseIndex = (phraseIndex + 1) % loaderPhrases.length;
+          el.reviewLoaderText.textContent = loaderPhrases[phraseIndex];
+        }, 420);
 
-        el.outImproved.textContent = result.improved || '—';
-        renderMistakes(result.mistakes);
-        el.outPhrasing.textContent = result.phrasing;
+        setTimeout(function () {
+          clearInterval(loaderSwap);
+          el.reviewLoader.classList.remove('is-visible');
+          updateReviewButtonState();
 
-        resetContinuationUI();
-        el.resultCard.classList.remove('is-hidden');
-        el.resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          var result = analyzeEnglish(text, state.level);
 
-        addStep(1);
+          state.lastOriginal = text;
+          state.lastImproved = result.improved;
+          state.mistakeTypes = result.mistakeTypes.slice();
+
+          el.outImproved.textContent = result.improved || '—';
+          renderMistakes(result.mistakes);
+          el.outPhrasing.textContent = result.phrasing;
+          setReactionByResult(result);
+          el.nextStepNote.textContent = 'Next step: choose Continue learning or wait for auto-continue.';
+
+          resetContinuationUI();
+          state.afterReviewInteracted = false;
+          el.resultCard.classList.remove('is-hidden');
+          el.resultCard.classList.remove('result-entrance');
+          /* Принудительный reflow чтобы анимация запускалась каждый раз */
+          void el.resultCard.offsetWidth;
+          el.resultCard.classList.add('result-entrance');
+
+          el.resultTransitionNote.classList.remove('is-visible');
+          setTimeout(function () {
+            el.resultTransitionNote.classList.add('is-visible');
+          }, 60);
+
+          el.resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          scheduleAutoContinue();
+
+          addStep(1);
+        }, waitMs);
       }
 
       /* ========================================================================
@@ -1525,6 +1844,8 @@
       });
 
       el.btnExplain.addEventListener('click', function () {
+        state.afterReviewInteracted = true;
+        clearAutoContinue();
         if (state.continuationFlags.explain) return;
         state.continuationFlags.explain = true;
         var txt = buildExplainMore(state.mistakeTypes, state.level);
@@ -1534,6 +1855,8 @@
       });
 
       el.btnExample.addEventListener('click', function () {
+        state.afterReviewInteracted = true;
+        clearAutoContinue();
         if (state.continuationFlags.example) return;
         state.continuationFlags.example = true;
         el.panelExample.innerHTML = escapeHtml(buildExamples(state.mistakeTypes, state.level)).replace(/\n/g, '<br />');
@@ -1542,6 +1865,8 @@
       });
 
       el.btnPractice.addEventListener('click', function () {
+        state.afterReviewInteracted = true;
+        clearAutoContinue();
         if (state.continuationFlags.practice) return;
         if (!state.level) return;
         state.continuationFlags.practice = true;
@@ -1550,11 +1875,26 @@
         addStep(1);
       });
 
+      el.btnContinueSimilar.addEventListener('click', function () {
+        startSimilarSentenceFlow();
+      });
+
+      el.btnContinueFollowup.addEventListener('click', function () {
+        startFollowUpFlow();
+      });
+
+      el.btnContinuePractice.addEventListener('click', function () {
+        startPracticeAgainFlow();
+      });
+
       el.btnCheckMini.addEventListener('click', checkMiniAnswer);
 
       el.btnSkipMini.addEventListener('click', function () {
         el.miniCard.classList.add('is-hidden');
         el.miniFeedback.textContent = '';
+        el.nextStepNote.textContent = 'Next step: answer a follow-up question or write another sentence.';
+        state.afterReviewInteracted = false;
+        scheduleAutoContinue();
       });
 
       /* ========================================================================
