@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal AI English Tutor — MVP</title>
+  <!--
+    ПРИМЕЧАНИЕ ДЛЯ РАЗРАБОТЧИКА (RU):
+    Один файл: разметка, стили и логика. Нет внешних зависимостей и сервера.
+    «Умная» проверка — эвристики + шаблоны (симуляция репетитора).
+    Интерфейс на английском; комментарии в коде — на русском для ясности.
+  -->
+  <style>
+    /* ========== CSS-переменные: светлая современная тема ========== */
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-muted: #f0f3fa;
+      --text: #1a1f2e;
+      --text-muted: #5c6578;
+      --border: #e2e6ef;
+      --accent: #3d5afe;
+      --accent-hover: #2f4ae8;
+      --accent-soft: rgba(61, 90, 254, 0.12);
+      --success: #0d9f4c;
+      --success-soft: rgba(13, 159, 76, 0.12);
+      --warning: #c27a00;
+      --warning-soft: rgba(194, 122, 0, 0.12);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 8px 30px rgba(26, 31, 46, 0.08);
+      --shadow-hover: 0 12px 40px rgba(26, 31, 46, 0.12);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+      --max-width: 720px;
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    /* ========== Шапка ========== */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(244, 246, 251, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .app-header__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .app-header__brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .app-header__title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+
+    .app-header__tagline {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .app-header__badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* ========== Лэйаут: центральная колонка ========== */
+    .app-main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ========== Карточки ========== */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 1.35rem 1.5rem;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card__title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .card__subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0 0 1rem;
+    }
+
+    /* ========== Intro ========== */
+    .intro-highlight {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .intro-list {
+      margin: 0.75rem 0 1.25rem;
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    .intro-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* ========== Селекторы уровня и режима (чипы) ========== */
+    .field-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--surface-muted);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), color var(--transition), transform 0.15s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .chip:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .chip--active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .chip:active {
+      transform: scale(0.98);
+    }
+
+    /* ========== Поля ввода ========== */
+    .prompt-box {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .prompt-box strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    textarea.input-text {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 1rem;
+      line-height: 1.5;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    textarea.input-text:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    textarea.input-text::placeholder {
+      color: #9aa3b5;
+    }
+
+    .input-text--mini {
+      min-height: 72px;
+    }
+
+    /* ========== Кнопки ========== */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.85rem;
+    }
+
+    .btn {
+      appearance: none;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 0.65rem 1.15rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), transform 0.15s ease, box-shadow var(--transition);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .btn--primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(61, 90, 254, 0.35);
+    }
+
+    .btn--primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn--primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn--secondary {
+      background: var(--surface-muted);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn--secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px dashed var(--border);
+    }
+
+    .btn--ghost:hover {
+      border-style: solid;
+      background: var(--accent-soft);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    /* ========== Результаты разбора ========== */
+    .result-block {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      animation: fadeIn 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result-section {
+      margin-bottom: 1rem;
+    }
+
+    .result-section h4 {
+      margin: 0 0 0.4rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .improved-text {
+      background: var(--success-soft);
+      border: 1px solid rgba(13, 159, 76, 0.25);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .mistake-item {
+      background: var(--warning-soft);
+      border-left: 3px solid var(--warning);
+      padding: 0.65rem 0.85rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-bottom: 0.5rem;
+      font-size: 0.92rem;
+    }
+
+    .mistake-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .phrasing-tip {
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--surface-muted);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .continuation-panel {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--surface-muted);
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border);
+      font-size: 0.92rem;
+      color: var(--text);
+      display: none;
+    }
+
+    .continuation-panel.is-visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* ========== Скрытые блоки до появления данных ========== */
+    .is-hidden {
+      display: none !important;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ========== Прогресс ========== */
+    .progress-card {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: stretch;
+      justify-content: space-between;
+    }
+
+    .progress-stat {
+      flex: 1 1 140px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .progress-stat__value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+    }
+
+    .progress-stat__label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .progress-hint {
+      width: 100%;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* ========== Сообщения об ошибках / подсказки ========== */
+    .hint-bar {
+      font-size: 0.85rem;
+      color: var(--warning);
+      margin-top: 0.5rem;
+      min-height: 1.25rem;
+    }
+
+    .success-msg {
+      font-size: 0.9rem;
+      color: var(--success);
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    /* ========== Адаптив ========== */
+    @media (max-width: 560px) {
+      .app-header__inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .card {
+        padding: 1.1rem 1.15rem;
+      }
+
+      .app-main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== HEADER ========== -->
+  <header class="app-header" role="banner">
+    <div class="app-header__inner">
+      <div class="app-header__brand">
+        <h1 class="app-header__title">Personal AI English Tutor</h1>
+        <p class="app-header__tagline">Practice, feedback, and micro-drills — MVP prototype</p>
+      </div>
+      <span class="app-header__badge" aria-hidden="true">Offline tutor</span>
+    </div>
+  </header>
+
+  <main class="app-main" id="main">
+    <!-- ========== INTRO CARD ========== -->
+    <section class="card" id="intro-card" aria-labelledby="intro-title">
+      <div class="intro-highlight" aria-hidden="true">✦ Session-based practice</div>
+      <h2 class="card__title" id="intro-title">Welcome to your personal tutor</h2>
+      <p class="card__subtitle">
+        Pick your level, choose how you want to start, and get structured feedback. This build uses smart rules and templates
+        (no cloud AI) — perfect for testing the learning flow.
+      </p>
+      <ul class="intro-list">
+        <li>Three start modes: your own text, a daily question, or a quick mini exercise</li>
+        <li>Clear improved version, mistake notes, and phrasing tips</li>
+        <li>Optional follow-ups and a short drill linked to your last review</li>
+      </ul>
+      <button type="button" class="btn btn--primary" id="btn-scroll-setup" aria-controls="setup-card">
+        Set up your session
+      </button>
+    </section>
+
+    <!-- ========== LEVEL + MODE (setup) ========== -->
+    <section class="card" id="setup-card" aria-labelledby="setup-title">
+      <h2 class="card__title" id="setup-title">Your level &amp; start mode</h2>
+      <p class="card__subtitle">Choose what matches you today. You can change this anytime.</p>
+
+      <div style="margin-bottom: 1.25rem">
+        <span class="field-label" id="level-label">Level</span>
+        <div id="chip-group-level" class="chip-group" role="group" aria-labelledby="level-label">
+          <button type="button" class="chip" data-level="beginner" aria-pressed="false">Beginner</button>
+          <button type="button" class="chip" data-level="intermediate" aria-pressed="false">Intermediate</button>
+          <button type="button" class="chip" data-level="advanced" aria-pressed="false">Advanced</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="field-label" id="mode-label">Start mode</span>
+        <div id="chip-group-mode" class="chip-group" role="group" aria-labelledby="mode-label">
+          <button type="button" class="chip" data-mode="own" aria-pressed="false">Write my own text</button>
+          <button type="button" class="chip" data-mode="daily" aria-pressed="false">Daily question</button>
+          <button type="button" class="chip" data-mode="mini" aria-pressed="false">Mini exercise</button>
+        </div>
+      </div>
+      <p class="hint-bar" id="setup-hint" role="status"></p>
+    </section>
+
+    <!-- ========== INPUT AREA ========== -->
+    <section class="card" id="workspace-card" aria-labelledby="workspace-title">
+      <h2 class="card__title" id="workspace-title">Your answer</h2>
+      <p class="card__subtitle" id="workspace-desc">Write in English. When you are ready, run a review.</p>
+
+      <div id="prompt-container" class="prompt-box is-hidden" aria-live="polite">
+        <strong id="prompt-label">Prompt</strong>
+        <span id="prompt-text"></span>
+      </div>
+
+      <label for="user-input" class="visually-hidden">Your English text</label>
+      <textarea
+        id="user-input"
+        class="input-text"
+        placeholder="Type your English here…"
+        autocomplete="off"
+        spellcheck="true"
+      ></textarea>
+
+      <div class="btn-row">
+        <button type="button" class="btn btn--primary" id="btn-review" disabled>Check &amp; review</button>
+        <button type="button" class="btn btn--secondary" id="btn-clear-input">Clear input</button>
+        <button type="button" class="btn btn--ghost" id="btn-new-daily" type="button">New daily question</button>
+      </div>
+      <p class="hint-bar" id="input-hint" role="status"></p>
+    </section>
+
+    <!-- ========== FEEDBACK / RESULT CARD ========== -->
+    <section class="card is-hidden" id="result-card" aria-labelledby="result-title" aria-live="polite">
+      <h2 class="card__title" id="result-title">Review</h2>
+      <p class="card__subtitle">Here is a tutor-style breakdown of your text.</p>
+
+      <div id="result-body">
+        <div class="result-section">
+          <h4>Improved version</h4>
+          <div class="improved-text" id="out-improved"></div>
+        </div>
+        <div class="result-section">
+          <h4>Mistakes &amp; explanations</h4>
+          <div id="out-mistakes"></div>
+        </div>
+        <div class="result-section">
+          <h4>Better phrasing</h4>
+          <p class="phrasing-tip" id="out-phrasing"></p>
+        </div>
+      </div>
+
+      <div class="btn-row" id="continuation-row">
+        <button type="button" class="btn btn--secondary" id="btn-explain-more">Explain more</button>
+        <button type="button" class="btn btn--secondary" id="btn-give-example">Give example</button>
+        <button type="button" class="btn btn--secondary" id="btn-practice-mistake">Practice this mistake</button>
+      </div>
+
+      <div class="continuation-panel" id="panel-explain" role="region" aria-label="Extended explanation"></div>
+      <div class="continuation-panel" id="panel-example" role="region" aria-label="Example sentences"></div>
+    </section>
+
+    <!-- ========== MINI EXERCISE CARD ========== -->
+    <section class="card is-hidden" id="mini-card" aria-labelledby="mini-title">
+      <h2 class="card__title" id="mini-title">Mini exercise</h2>
+      <p class="card__subtitle" id="mini-desc">Short drill based on your last review (simulated tutor).</p>
+      <div class="prompt-box" id="mini-prompt-box">
+        <strong>Task</strong>
+        <span id="mini-question"></span>
+      </div>
+      <label for="mini-input" class="visually-hidden">Mini exercise answer</label>
+      <textarea id="mini-input" class="input-text input-text--mini" placeholder="Your answer…"></textarea>
+      <div class="btn-row">
+        <button type="button" class="btn btn--primary" id="btn-check-mini">Check mini exercise</button>
+        <button type="button" class="btn btn--secondary" id="btn-skip-mini">Skip</button>
+      </div>
+      <p class="hint-bar" id="mini-feedback" role="status"></p>
+    </section>
+
+    <!-- ========== PROGRESS ========== -->
+    <section class="card progress-card" id="progress-card" aria-labelledby="progress-title">
+      <h2 class="card__title" id="progress-title" style="width: 100%; margin-bottom: 0">Session progress</h2>
+      <div class="progress-stat">
+        <div class="progress-stat__value" id="stat-session-steps">0</div>
+        <div class="progress-stat__label">Steps completed (this session)</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat__value" id="stat-session-ex">0</div>
+        <div class="progress-stat__label">Exercises completed (this session)</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat__value" id="stat-total-steps">0</div>
+        <div class="progress-stat__label">All-time steps (saved)</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat__value" id="stat-total-ex">0</div>
+        <div class="progress-stat__label">All-time exercises (saved)</div>
+      </div>
+      <p class="progress-hint">
+        Level and lifetime totals are stored in <code>localStorage</code> on this device. Session counters reset when you reload the page.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ========================================================================
+         КОНСТАНТЫ localStorage — ключи для уровня и накопительной статистики
+         ======================================================================== */
+      var LS_LEVEL = 'englishTutor_level';
+      var LS_MODE = 'englishTutor_mode';
+      var LS_TOTAL_STEPS = 'englishTutor_totalSteps';
+      var LS_TOTAL_EX = 'englishTutor_totalExercises';
+      var LS_DAILY_INDEX = 'englishTutor_dailyIndex';
+
+      /* ========================================================================
+         Данные: ежедневные вопросы (короткий ответ на английском)
+         ======================================================================== */
+      var DAILY_QUESTIONS = [
+        {
+          q: 'In 2–4 sentences, describe what you did yesterday using the past simple.',
+          hint: 'Use time words like yesterday, last night, then…',
+        },
+        {
+          q: 'Explain one goal you have for this month and how you will work on it.',
+          hint: 'Try: I want to … / I plan to … / I will …',
+        },
+        {
+          q: 'Write a polite email sentence asking a colleague for a short meeting.',
+          hint: 'Consider: Would it be possible…? / Could we…?',
+        },
+        {
+          q: 'Describe your favorite place to relax and why you like it.',
+          hint: 'Use because, so, and sensory details if you can.',
+        },
+        {
+          q: 'What is one habit you are proud of? Write 2–3 sentences.',
+          hint: 'Present simple + a reason works well here.',
+        },
+        {
+          q: 'Imagine you arrived late. Apologize briefly and give a simple reason.',
+          hint: 'Sorry I am late… / There was…',
+        },
+      ];
+
+      /* ========================================================================
+         Пулы мини-упражнений: по уровню и по «типу ошибки» для связки с разбором
+         ======================================================================== */
+      var MINI_POOL_BY_LEVEL = {
+        beginner: [
+          {
+            q: 'Complete the sentence with the correct pronoun: ___ am learning English. (I / i)',
+            answers: ['i am', 'I am'],
+          },
+          {
+            q: 'Choose the correct word: I ___ a student. (am / is / are)',
+            answers: ['am'],
+          },
+          {
+            q: 'Fix the contraction: I do not like coffee → write the short form.',
+            answers: ["don't like", 'do not like', 'dont like'],
+          },
+        ],
+        intermediate: [
+          {
+            q: 'Rewrite using Present Perfect: I finished my work. (start with I have…)',
+            answers: ['i have finished', 'I have finished'],
+          },
+          {
+            q: 'Fill in: If I ___ time, I will call you. (have / has / had)',
+            answers: ['have'],
+          },
+          {
+            q: 'Which is better in formal writing: "a lot of" or "many" before "meetings"? Type your choice only.',
+            answers: ['many', 'Many'],
+          },
+        ],
+        advanced: [
+          {
+            q: 'Rewrite more formally: "I can\'t make it tomorrow."',
+            answers: [
+              'i am unable to attend tomorrow',
+              'I am unable to attend tomorrow',
+              'i will not be able to attend tomorrow',
+              'I will not be able to attend tomorrow',
+            ],
+          },
+          {
+            q: 'Complete: Not only ___ he finish early, but he also helped the team. (did / does / do)',
+            answers: ['did'],
+          },
+          {
+            q: 'One word: What do we call a mild, polite criticism? (starts with "s", 7 letters)',
+            answers: ['subtle', 'Subtle'],
+          },
+        ],
+      };
+
+      /* ========================================================================
+         Состояние приложения (сессия + ссылка на последний разбор)
+         ======================================================================== */
+      var state = {
+        level: null,
+        mode: null,
+        dailyIndex: 0,
+        sessionSteps: 0,
+        sessionExercises: 0,
+        totalSteps: 0,
+        totalExercises: 0,
+        lastOriginal: '',
+        lastImproved: '',
+        mistakeTypes: [],
+        continuationFlags: {
+          explain: false,
+          example: false,
+          practice: false,
+        },
+        miniStandalone: false,
+      };
+
+      /* ========================================================================
+         Утилиты: безопасный парсинг чисел из localStorage
+         ======================================================================== */
+      function readInt(key, fallback) {
+        var v = localStorage.getItem(key);
+        var n = parseInt(v, 10);
+        return isNaN(n) ? fallback : n;
+      }
+
+      function saveProgress() {
+        localStorage.setItem(LS_TOTAL_STEPS, String(state.totalSteps));
+        localStorage.setItem(LS_TOTAL_EX, String(state.totalExercises));
+      }
+
+      function saveLevel() {
+        if (state.level) localStorage.setItem(LS_LEVEL, state.level);
+      }
+
+      function saveMode() {
+        if (state.mode) localStorage.setItem(LS_MODE, state.mode);
+      }
+
+      function saveDailyIndex() {
+        localStorage.setItem(LS_DAILY_INDEX, String(state.dailyIndex));
+      }
+
+      function loadStored() {
+        state.level = localStorage.getItem(LS_LEVEL);
+        state.mode = localStorage.getItem(LS_MODE);
+        state.totalSteps = readInt(LS_TOTAL_STEPS, 0);
+        state.totalExercises = readInt(LS_TOTAL_EX, 0);
+        state.dailyIndex = readInt(LS_DAILY_INDEX, 0) % DAILY_QUESTIONS.length;
+      }
+
+      /* ========================================================================
+         DOM-элементы
+         ======================================================================== */
+      var el = {
+        setupHint: document.getElementById('setup-hint'),
+        inputHint: document.getElementById('input-hint'),
+        userInput: document.getElementById('user-input'),
+        btnReview: document.getElementById('btn-review'),
+        btnClearInput: document.getElementById('btn-clear-input'),
+        btnNewDaily: document.getElementById('btn-new-daily'),
+        promptContainer: document.getElementById('prompt-container'),
+        promptText: document.getElementById('prompt-text'),
+        workspaceDesc: document.getElementById('workspace-desc'),
+        resultCard: document.getElementById('result-card'),
+        outImproved: document.getElementById('out-improved'),
+        outMistakes: document.getElementById('out-mistakes'),
+        outPhrasing: document.getElementById('out-phrasing'),
+        btnExplain: document.getElementById('btn-explain-more'),
+        btnExample: document.getElementById('btn-give-example'),
+        btnPractice: document.getElementById('btn-practice-mistake'),
+        panelExplain: document.getElementById('panel-explain'),
+        panelExample: document.getElementById('panel-example'),
+        miniCard: document.getElementById('mini-card'),
+        miniQuestion: document.getElementById('mini-question'),
+        miniInput: document.getElementById('mini-input'),
+        miniFeedback: document.getElementById('mini-feedback'),
+        btnCheckMini: document.getElementById('btn-check-mini'),
+        btnSkipMini: document.getElementById('btn-skip-mini'),
+        miniDesc: document.getElementById('mini-desc'),
+        statSessionSteps: document.getElementById('stat-session-steps'),
+        statSessionEx: document.getElementById('stat-session-ex'),
+        statTotalSteps: document.getElementById('stat-total-steps'),
+        statTotalEx: document.getElementById('stat-total-ex'),
+        setupCard: document.getElementById('setup-card'),
+      };
+
+      /* ========================================================================
+         Нормализация ответа пользователя для сравнения в мини-упражнениях
+         ======================================================================== */
+      function normalizeAnswer(s) {
+        return String(s || '')
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, ' ')
+          .replace(/[’']/g, "'");
+      }
+
+      /* ========================================================================
+         Подсчёт шагов: сессия + all-time + обновление UI и localStorage
+         ======================================================================== */
+      function addStep(count) {
+        count = count || 1;
+        state.sessionSteps += count;
+        state.totalSteps += count;
+        saveProgress();
+        renderProgress();
+      }
+
+      function addExerciseDone() {
+        state.sessionExercises += 1;
+        state.totalExercises += 1;
+        saveProgress();
+        renderProgress();
+      }
+
+      function renderProgress() {
+        el.statSessionSteps.textContent = String(state.sessionSteps);
+        el.statSessionEx.textContent = String(state.sessionExercises);
+        el.statTotalSteps.textContent = String(state.totalSteps);
+        el.statTotalEx.textContent = String(state.totalExercises);
+      }
+
+      /* ========================================================================
+         UI: активация чипов уровня и режима
+         ======================================================================== */
+      /**
+       * Подсветка выбранного чипа внутри контейнера (по data-* атрибуту).
+       * @param {string} containerSelector — например #chip-group-level
+       */
+      function setChipActive(containerSelector, attrName, value) {
+        var group = document.querySelector(containerSelector);
+        if (!group) return;
+        var chips = group.querySelectorAll('.chip');
+        chips.forEach(function (chip) {
+          var v = chip.getAttribute(attrName);
+          var on = v === value;
+          chip.classList.toggle('chip--active', on);
+          chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      }
+
+      function updateReviewButtonState() {
+        var ready = !!(state.level && state.mode);
+        el.btnReview.disabled = !ready;
+      }
+
+      function resetContinuationUI() {
+        state.continuationFlags = { explain: false, example: false, practice: false };
+        el.panelExplain.classList.remove('is-visible');
+        el.panelExample.classList.remove('is-visible');
+        el.panelExplain.textContent = '';
+        el.panelExample.textContent = '';
+        el.btnExplain.disabled = false;
+        el.btnExample.disabled = false;
+        el.btnPractice.disabled = false;
+      }
+
+      /* ========================================================================
+         Ядро «разбора»: эвристики + уровневые шаблоны (имитация AI-репетитора)
+         ======================================================================== */
+      function analyzeEnglish(text, level) {
+        var original = String(text || '').trim();
+        var mistakes = [];
+        var mistakeTypes = [];
+        var improved = original;
+
+        function addMistake(type, title, explanation) {
+          mistakeTypes.push(type);
+          mistakes.push({ title: title, explanation: explanation });
+        }
+
+        if (!original.length) {
+          return {
+            improved: '',
+            mistakes: [{ title: 'Empty answer', explanation: 'Write at least one sentence so the tutor can help you.' }],
+            mistakeTypes: ['empty'],
+            phrasing: 'Start with a simple sentence about your day or your goal — short is fine.',
+          };
+        }
+
+        /* --- Базовая пунктуация пробела после точки --- */
+        improved = improved.replace(/\.([A-Za-z])/g, '. $1');
+
+        /* --- Местоимение I (без двойного .test() на /g — сбрасывали бы lastIndex) --- */
+        if (/\bi\b/.test(improved)) {
+          improved = improved.replace(/\bi\b/g, 'I');
+          addMistake('pronoun_i', 'Capitalize “I”', 'In English, the pronoun “I” is always written as a capital letter, even in the middle of a sentence.');
+        }
+
+        /* --- its vs it's (простая эвристика) --- */
+        if (/\bits\b/.test(improved) && /\b(it|this|that|phone|email|idea)\b/i.test(improved)) {
+          addMistake(
+            'its_its',
+            'its vs. it’s',
+            '“It’s” means “it is” or “it has”. “Its” shows possession (like “his/her”). If you meant “it is”, use it’s.'
+          );
+        }
+
+        /* --- your vs you're --- */
+        if (/\byour\b/i.test(improved) && /\b(here|late|right|wrong|ready)\b/i.test(improved)) {
+          addMistake(
+            'your_youre',
+            'your vs. you’re',
+            '“You’re” = you are. “Your” shows possession. Compare: You’re ready. / Your idea is good.'
+          );
+        }
+
+        /* --- there / their / they're --- */
+        if (/\btheir\b/i.test(improved) && /\b(is|are|was|here)\b/i.test(improved)) {
+          addMistake(
+            'there_their',
+            'there / their / they’re',
+            '“There” often points to a place or starts “there is/are”. “Their” = belonging to them. “They’re” = they are.'
+          );
+        }
+
+        /* --- dont / cant без апострофа --- */
+        if (/\bdont\b/i.test(improved)) {
+          improved = improved.replace(/\bdont\b/gi, "don't");
+          addMistake('contractions', 'Contractions', 'Informal negatives usually use an apostrophe: don’t, can’t, won’t, isn’t.');
+        }
+        if (/\bcant\b/i.test(improved)) {
+          improved = improved.replace(/\bcant\b/gi, "can't");
+          addMistake('contractions', 'Contractions', 'Use an apostrophe in can’t (cannot).');
+        }
+        if (/\bwont\b/i.test(improved)) {
+          improved = improved.replace(/\bwont\b/gi, "won't");
+          addMistake('contractions', 'Contractions', 'Won’t needs an apostrophe (will not).');
+        }
+
+        /* --- a / an перед гласным звуком (очень грубая проверка) --- */
+        if (/\ba ([aeiouAEIOU][a-z]+)\b/.test(improved)) {
+          addMistake('a_an', 'a / an', 'Use “an” before vowel sounds in many cases (an apple, an hour). Your text may need “an” instead of “a”.');
+        }
+
+        /* --- Двойные пробелы --- */
+        if (/  +/.test(original)) {
+          improved = improved.replace(/  +/g, ' ');
+          addMistake('spacing', 'Spacing', 'Remove double spaces — they distract readers and look less polished.');
+        }
+
+        /* --- Первая буква предложения --- */
+        if (/^[a-z]/.test(improved)) {
+          improved = improved.charAt(0).toUpperCase() + improved.slice(1);
+          addMistake('capital', 'Sentence capitals', 'Start sentences with a capital letter.');
+        }
+
+        /* --- Очень общие слова: подсказка уровня --- */
+        if (/\bvery\b/i.test(improved)) {
+          addMistake('word_choice', 'Word choice: “very”', '“Very” is fine, but stronger adjectives often sound more natural: exhausted instead of very tired.');
+        }
+
+        /* --- Если ошибок мало или нет — добавляем мягкую обратную связь по уровню --- */
+        if (mistakes.length === 0) {
+          if (level === 'beginner') {
+            addMistake(
+              'style',
+              'Keep building fluency',
+              'Your sentence looks clean. Next, try adding one connector (because, so, but) to link two ideas.'
+            );
+          } else if (level === 'intermediate') {
+            addMistake(
+              'style',
+              'Add precision',
+              'Good control. Try replacing a general verb with a more specific one, or add a time marker (recently, already, yet).'
+            );
+          } else {
+            addMistake(
+              'style',
+              'Refine tone and cohesion',
+              'Strong draft. Consider tightening wordiness and varying sentence openings for a more natural rhythm.'
+            );
+          }
+        }
+
+        /* --- Фразировка «лучше сказать» — шаблоны по уровню --- */
+        var phrasing = '';
+        if (level === 'beginner') {
+          phrasing =
+            'Try a simple frame: “I want to … because …” or “Yesterday I … and then I …”. Short clauses are easier to keep accurate.';
+        } else if (level === 'intermediate') {
+          phrasing =
+            'For smoother professional tone, prefer “I would like to…” over “I want…” in requests, and use “Could we…?” for meetings.';
+        } else {
+          phrasing =
+            'For nuanced tone, combine hedging (“I might suggest…”) with clear outcomes (“…so we can finalize by Friday”).';
+        }
+
+        /* --- Лёгкая «полировка» финальной строки (если не пусто) --- */
+        improved = improved.replace(/\s+([.,!?])/g, '$1');
+
+        return {
+          improved: improved,
+          mistakes: mistakes,
+          mistakeTypes: mistakeTypes,
+          phrasing: phrasing,
+        };
+      }
+
+      /* ========================================================================
+         Тексты для кнопок продолжения (Explain more / Give example)
+         ======================================================================== */
+      function buildExplainMore(mistakeTypes, level) {
+        var parts = [];
+        parts.push('Here is a deeper explanation in plain language:');
+        if (mistakeTypes.indexOf('pronoun_i') !== -1) {
+          parts.push(
+            'Capital “I” is a fixed spelling rule in English — unlike some languages where “i” can stay lowercase inside a sentence.'
+          );
+        }
+        if (mistakeTypes.indexOf('contractions') !== -1) {
+          parts.push(
+            'Apostrophes in contractions replace missing letters: do not → don’t (the “o” disappears). This is standard in informal and neutral writing.'
+          );
+        }
+        if (mistakeTypes.indexOf('your_youre') !== -1 || mistakeTypes.indexOf('its_its') !== -1) {
+          parts.push(
+            'A quick test: expand the word. If “you are” fits, write you’re. If “it is / it has” fits, write it’s. If not, you likely need your/its.'
+          );
+        }
+        if (mistakeTypes.indexOf('a_an') !== -1) {
+          parts.push(
+            '“An” is used before vowel sounds, not only vowel letters — compare “a university” (yoo sound) vs “an hour” (silent h).'
+          );
+        }
+        if (mistakeTypes.indexOf('empty') !== -1) {
+          parts.push('Start with anything — even “Yesterday I studied English for 20 minutes.” Small starts build momentum.');
+        }
+        if (parts.length === 1) {
+          parts.push(
+            level === 'advanced'
+              ? 'Focus on collocations: some word pairs are far more common than literal translations from your first language.'
+              : 'Focus on one pattern per session: capitals, articles, or tense — then reuse it in your next answer.'
+          );
+        }
+        return parts.join(' ');
+      }
+
+      function buildExamples(mistakeTypes, level) {
+        var lines = [];
+        lines.push('Example patterns you can copy and adapt:');
+        if (mistakeTypes.indexOf('pronoun_i') !== -1) {
+          lines.push('• I am learning English because I use it at work.');
+        }
+        if (mistakeTypes.indexOf('contractions') !== -1) {
+          lines.push("• I don’t have time today, but I can help tomorrow.");
+        }
+        if (mistakeTypes.indexOf('your_youre') !== -1) {
+          lines.push("• You’re right — your suggestion is helpful.");
+        }
+        if (mistakeTypes.indexOf('its_its') !== -1) {
+          lines.push("• It’s important to finish on time. The team values its deadlines.");
+        }
+        if (mistakeTypes.indexOf('there_their') !== -1) {
+          lines.push('• They’re late because their train was delayed. There is a backup plan.');
+        }
+        if (lines.length === 1) {
+          if (level === 'beginner') {
+            lines.push('• I wake up at 7, then I eat breakfast.');
+            lines.push('• I like coffee, but I prefer tea in the evening.');
+          } else if (level === 'intermediate') {
+            lines.push('• I have already sent the file — please let me know if you need changes.');
+            lines.push('• Could we schedule a 15-minute call to align on next steps?');
+          } else {
+            lines.push('• I would appreciate it if you could review the draft by EOD.');
+            lines.push('• Not only did we meet the deadline, but we also improved the quality bar.');
+          }
+        }
+        return lines.join('\n');
+      }
+
+      /* ========================================================================
+         Выбор мини-упражнения: связь с типом ошибки или случайный элемент пула
+         ======================================================================== */
+      function pickMiniExercise(level, mistakeTypes) {
+        var pool = MINI_POOL_BY_LEVEL[level] || MINI_POOL_BY_LEVEL.intermediate;
+        var idx = 0;
+        if (mistakeTypes.indexOf('pronoun_i') !== -1) idx = 0;
+        else if (mistakeTypes.indexOf('contractions') !== -1) idx = Math.min(2, pool.length - 1);
+        else if (mistakeTypes.indexOf('your_youre') !== -1 || mistakeTypes.indexOf('its_its') !== -1) idx = 1 % pool.length;
+        else idx = Math.floor(Math.random() * pool.length);
+        return pool[idx];
+      }
+
+      function showMiniExercise(task, fromStandalone) {
+        state.miniStandalone = !!fromStandalone;
+        el.miniQuestion.textContent = task.q;
+        el.miniInput.value = '';
+        el.miniFeedback.textContent = '';
+        el.miniCard.classList.remove('is-hidden');
+        el.miniCard.dataset.answers = JSON.stringify(task.answers);
+        el.miniDesc.textContent = fromStandalone
+          ? 'Standalone quick drill — no review required.'
+          : 'Based on your last review, try this short task.';
+        el.miniCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function checkMiniAnswer() {
+        var raw = el.miniInput.value;
+        var normUser = normalizeAnswer(raw);
+        var answersJson = el.miniCard.dataset.answers;
+        var list = [];
+        try {
+          list = JSON.parse(answersJson || '[]');
+        } catch (e) {
+          list = [];
+        }
+        var ok = false;
+        for (var i = 0; i < list.length; i++) {
+          if (normalizeAnswer(list[i]) === normUser || normUser.indexOf(normalizeAnswer(list[i])) !== -1) {
+            ok = true;
+            break;
+          }
+        }
+        /* Допускаем частичное совпадение для заданий «переписать предложение» */
+        if (!ok && normUser.length > 6) {
+          for (var j = 0; j < list.length; j++) {
+            if (normUser.indexOf(normalizeAnswer(list[j])) !== -1) ok = true;
+          }
+        }
+        if (ok) {
+          el.miniFeedback.textContent = 'Nice work — that matches the target pattern.';
+          el.miniFeedback.style.color = 'var(--success)';
+          addExerciseDone();
+          addStep(1);
+        } else {
+          el.miniFeedback.textContent = 'Not quite yet. Compare your answer with the hint and try a small revision.';
+          el.miniFeedback.style.color = 'var(--warning)';
+        }
+      }
+
+      /* ========================================================================
+         Отрисовка карточки результатов
+         ======================================================================== */
+      function renderMistakes(mistakes) {
+        el.outMistakes.innerHTML = '';
+        mistakes.forEach(function (m) {
+          var div = document.createElement('div');
+          div.className = 'mistake-item';
+          div.innerHTML = '<strong>' + escapeHtml(m.title) + '</strong><br />' + escapeHtml(m.explanation);
+          el.outMistakes.appendChild(div);
+        });
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function runReview() {
+        el.inputHint.textContent = '';
+        if (!state.level || !state.mode) {
+          el.setupHint.textContent = 'Please choose both a level and a start mode.';
+          el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+        el.setupHint.textContent = '';
+
+        var text = el.userInput.value;
+        var result = analyzeEnglish(text, state.level);
+
+        state.lastOriginal = text;
+        state.lastImproved = result.improved;
+        state.mistakeTypes = result.mistakeTypes.slice();
+
+        el.outImproved.textContent = result.improved || '—';
+        renderMistakes(result.mistakes);
+        el.outPhrasing.textContent = result.phrasing;
+
+        resetContinuationUI();
+        el.resultCard.classList.remove('is-hidden');
+        el.resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        addStep(1);
+      }
+
+      /* ========================================================================
+         Режимы: собственный текст / ежедневный вопрос / мини-упражнение
+         ======================================================================== */
+      function applyModeUI() {
+        el.promptContainer.classList.add('is-hidden');
+        el.btnNewDaily.classList.add('is-hidden');
+        el.userInput.placeholder = 'Type your English here…';
+
+        if (state.mode === 'own') {
+          el.workspaceDesc.textContent = 'Write anything you want to practice: an email snippet, diary entry, or answer to a prompt you imagine.';
+        } else if (state.mode === 'daily') {
+          var item = DAILY_QUESTIONS[state.dailyIndex];
+          el.promptContainer.classList.remove('is-hidden');
+          el.promptText.textContent = item.q + ' ' + item.hint;
+          el.workspaceDesc.textContent = 'Answer the daily question in English.';
+          el.btnNewDaily.classList.remove('is-hidden');
+        } else if (state.mode === 'mini') {
+          el.workspaceDesc.textContent = 'Solve the mini exercise below, then optionally write a follow-up sentence.';
+          var pool = MINI_POOL_BY_LEVEL[state.level] || MINI_POOL_BY_LEVEL.intermediate;
+          var task = pool[Math.floor(Math.random() * pool.length)];
+          el.promptContainer.classList.remove('is-hidden');
+          el.promptText.textContent = task.q;
+          el.userInput.placeholder = 'Optional: add a short related sentence in English…';
+        }
+      }
+
+      function initModeMiniFlow() {
+        if (state.mode === 'mini' && state.level) {
+          var pool = MINI_POOL_BY_LEVEL[state.level] || MINI_POOL_BY_LEVEL.intermediate;
+          var task = pool[Math.floor(Math.random() * pool.length)];
+          showMiniExercise(task, true);
+        }
+      }
+
+      /* ========================================================================
+         События: чипы, кнопки, загрузка страницы
+         ======================================================================== */
+      document.getElementById('btn-scroll-setup').addEventListener('click', function () {
+        el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      document.querySelectorAll('.chip[data-level]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          state.level = chip.getAttribute('data-level');
+          setChipActive('#chip-group-level', 'data-level', state.level);
+          saveLevel();
+          updateReviewButtonState();
+          el.setupHint.textContent = '';
+          applyModeUI();
+          initModeMiniFlow();
+        });
+      });
+
+      document.querySelectorAll('.chip[data-mode]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          state.mode = chip.getAttribute('data-mode');
+          setChipActive('#chip-group-mode', 'data-mode', state.mode);
+          saveMode();
+          updateReviewButtonState();
+          el.setupHint.textContent = '';
+          applyModeUI();
+          initModeMiniFlow();
+        });
+      });
+
+      el.btnReview.addEventListener('click', runReview);
+
+      el.btnClearInput.addEventListener('click', function () {
+        el.userInput.value = '';
+        el.inputHint.textContent = '';
+      });
+
+      el.btnNewDaily.addEventListener('click', function () {
+        state.dailyIndex = (state.dailyIndex + 1) % DAILY_QUESTIONS.length;
+        saveDailyIndex();
+        applyModeUI();
+      });
+
+      el.btnExplain.addEventListener('click', function () {
+        if (state.continuationFlags.explain) return;
+        state.continuationFlags.explain = true;
+        var txt = buildExplainMore(state.mistakeTypes, state.level);
+        el.panelExplain.textContent = txt;
+        el.panelExplain.classList.add('is-visible');
+        addStep(1);
+      });
+
+      el.btnExample.addEventListener('click', function () {
+        if (state.continuationFlags.example) return;
+        state.continuationFlags.example = true;
+        el.panelExample.innerHTML = escapeHtml(buildExamples(state.mistakeTypes, state.level)).replace(/\n/g, '<br />');
+        el.panelExample.classList.add('is-visible');
+        addStep(1);
+      });
+
+      el.btnPractice.addEventListener('click', function () {
+        if (state.continuationFlags.practice) return;
+        if (!state.level) return;
+        state.continuationFlags.practice = true;
+        var task = pickMiniExercise(state.level, state.mistakeTypes);
+        showMiniExercise(task, false);
+        addStep(1);
+      });
+
+      el.btnCheckMini.addEventListener('click', checkMiniAnswer);
+
+      el.btnSkipMini.addEventListener('click', function () {
+        el.miniCard.classList.add('is-hidden');
+        el.miniFeedback.textContent = '';
+      });
+
+      /* ========================================================================
+         Инициализация при загрузке: восстановление уровня, индекса, статистики
+         ======================================================================== */
+      function init() {
+        loadStored();
+        renderProgress();
+
+        if (state.level) {
+          setChipActive('#chip-group-level', 'data-level', state.level);
+        }
+        if (state.mode) {
+          setChipActive('#chip-group-mode', 'data-mode', state.mode);
+        }
+
+        updateReviewButtonState();
+        applyModeUI();
+        initModeMiniFlow();
+
+        el.statTotalSteps.textContent = String(state.totalSteps);
+        el.statTotalEx.textContent = String(state.totalExercises);
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
