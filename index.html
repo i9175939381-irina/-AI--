@@ -977,7 +977,7 @@
               Help me say this better
             </button>
             <button type="button" class="btn btn--ghost" id="btn-try-example" aria-controls="workspace-card">
-              Show me an example
+              Show me an example (пример)
             </button>
           </div>
 
@@ -1045,7 +1045,7 @@
       <p class="card__subtitle" id="workspace-desc">Write your sentence. I’ll help you make it sound natural.</p>
 
       <div id="prompt-container" class="prompt-box is-hidden" aria-live="polite">
-        <strong id="prompt-label">Try this prompt</strong>
+        <strong id="prompt-label">Try this prompt (задание)</strong>
         <span id="prompt-text"></span>
       </div>
 
@@ -1053,14 +1053,14 @@
       <textarea
         id="user-input"
         class="input-text"
-        placeholder="Write your answer in English…"
+        placeholder="Write your answer in English (напиши свой ответ на английском)…"
         autocomplete="off"
         spellcheck="true"
       ></textarea>
 
       <div class="btn-row">
-        <button type="button" class="btn btn--primary" id="btn-review" disabled>Make it sound better</button>
-        <button type="button" class="btn btn--secondary" id="btn-clear-input">Clear</button>
+        <button type="button" class="btn btn--primary" id="btn-review" disabled>Make it sound better (сделать естественнее)</button>
+        <button type="button" class="btn btn--secondary" id="btn-clear-input">Clear (очистить)</button>
         <button type="button" class="btn btn--ghost" id="btn-new-daily" type="button">New daily prompt</button>
       </div>
       <div class="loader-line" id="review-loader" aria-live="polite">
@@ -1110,7 +1110,7 @@
           <button type="button" class="btn btn--secondary" id="btn-continue-followup">Answer a follow-up question</button>
           <button type="button" class="btn btn--secondary" id="btn-continue-practice">Practice this mistake again</button>
         </div>
-        <p class="continue-learning__auto" id="continue-auto-note">Choose your next step below.</p>
+        <p class="continue-learning__auto" id="continue-auto-note">Choose your next step below (выбери следующий шаг).</p>
       </div>
     </section>
 
@@ -1119,14 +1119,14 @@
       <h2 class="card__title" id="mini-title">Quick practice</h2>
       <p class="card__subtitle" id="mini-desc">One tiny exercise so the phrase sticks.</p>
       <div class="prompt-box" id="mini-prompt-box">
-        <strong>Practice task</strong>
+        <strong>Practice task (задание)</strong>
         <span id="mini-question"></span>
       </div>
       <label for="mini-input" class="visually-hidden">Mini exercise answer</label>
-      <textarea id="mini-input" class="input-text input-text--mini" placeholder="Your answer in English…"></textarea>
+      <textarea id="mini-input" class="input-text input-text--mini" placeholder="Your answer in English (ответ на английском)…"></textarea>
       <div class="btn-row">
-        <button type="button" class="btn btn--primary" id="btn-check-mini">Check</button>
-        <button type="button" class="btn btn--secondary" id="btn-skip-mini">Not now</button>
+        <button type="button" class="btn btn--primary" id="btn-check-mini">Check (проверить)</button>
+        <button type="button" class="btn btn--secondary" id="btn-skip-mini">Not now (позже)</button>
       </div>
       <p class="hint-bar" id="mini-feedback" role="status"></p>
     </section>
@@ -1209,70 +1209,70 @@
           title: 'In a park',
           description: 'You are sitting on a bench and watching people walk their dogs.\nIt feels calm and sunny.',
           situation: 'A person smiles and asks if this seat is free.',
-          task: 'Task: Answer politely in 1–2 short lines.',
+          task: 'Answer politely in 1–2 short lines.',
         },
         {
           level: 'beginner',
           title: 'In a cafe',
           description: 'You are ordering coffee and a snack.\nThe place is busy but friendly.',
           situation: 'The barista asks: “Would you like to sit here or take away?”',
-          task: 'Task: Reply and ask one simple follow-up question.',
+          task: 'Reply and ask one simple follow-up question.',
         },
         {
           level: 'beginner',
           title: 'On public transport',
           description: 'You are on a bus and not sure where to get off.\nYour stop might be next.',
           situation: 'You want to ask someone nearby for help.',
-          task: 'Task: Write what you would ask in 1 line.',
+          task: 'Write what you would ask in 1 line.',
         },
         {
           level: 'intermediate',
           title: 'At the library',
           description: 'You are looking for a book for your English class.\nThe shelves are full and quiet.',
           situation: 'The librarian says: “What kind of book are you looking for?”',
-          task: 'Task: Answer and ask for one recommendation.',
+          task: 'Answer and ask for one recommendation.',
         },
         {
           level: 'intermediate',
           title: 'At the airport',
           description: 'Your flight is delayed and you need updated information.\nYou are at the help desk.',
           situation: 'The staff member asks for your flight number.',
-          task: 'Task: Continue the dialogue in 2 short replies.',
+          task: 'Continue the dialogue in 2 short replies.',
         },
         {
           level: 'intermediate',
           title: 'Meeting a new person',
           description: 'You are at a small meetup.\nSomeone introduces themselves to you.',
           situation: '“Hi, I’m Daniel. Is this your first time here?”',
-          task: 'Task: Reply naturally and ask one friendly question.',
+          task: 'Reply naturally and ask one friendly question.',
         },
         {
           level: 'intermediate',
           title: 'Asking for help',
           description: 'You cannot find a meeting room in an office building.\nA staff member passes by.',
           situation: 'You need directions quickly but politely.',
-          task: 'Task: Write 2 lines: ask for help + thank them.',
+          task: 'Write 2 lines: ask for help + thank them.',
         },
         {
           level: 'advanced',
           title: 'Small talk before a meeting',
           description: 'You are waiting for a client call to start.\nYou have 2 minutes for light conversation.',
           situation: 'You want to sound warm but professional.',
-          task: 'Task: Write 2–3 short lines of natural small talk.',
+          task: 'Write 2–3 short lines of natural small talk.',
         },
         {
           level: 'advanced',
           title: 'On a train with a stranger',
           description: 'A traveler asks if this train stops at the central station.\nYou know the route well.',
           situation: 'You want to help clearly and kindly.',
-          task: 'Task: Explain the stop and ask a friendly follow-up question.',
+          task: 'Explain the stop and ask a friendly follow-up question.',
         },
         {
           level: 'advanced',
           title: 'At a cafe with a colleague',
           description: 'You are discussing weekend plans over coffee.\nThe conversation is relaxed.',
           situation: 'Your colleague says: “I might go hiking, not sure yet.”',
-          task: 'Task: Respond naturally and keep the conversation going in 2 lines.',
+          task: 'Respond naturally and keep the conversation going in 2 lines.',
         },
       ];
 
@@ -1461,7 +1461,7 @@
           'Scenario: ' + s.title + '\n\n' +
           s.description + '\n\n' +
           'Situation:\n' + s.situation + '\n\n' +
-          s.task
+          'Task (задание):\n' + s.task
         );
       }
 
@@ -1596,7 +1596,7 @@
           clearInterval(state.autoContinueInterval);
           state.autoContinueInterval = null;
         }
-        el.continueAutoNote.textContent = 'Choose your next step below.';
+        el.continueAutoNote.textContent = 'Choose your next step below (выбери следующий шаг).';
       }
 
       function setReactionByResult(result) {
@@ -1672,12 +1672,12 @@
       function scheduleAutoContinue() {
         clearAutoContinue();
         var secondsLeft = 8;
-        el.continueAutoNote.textContent = 'Choose your next step below.';
+        el.continueAutoNote.textContent = 'Choose your next step below (выбери следующий шаг).';
 
         state.autoContinueInterval = setInterval(function () {
           secondsLeft -= 1;
           if (secondsLeft > 0) {
-            el.continueAutoNote.textContent = 'Choose your next step below.';
+            el.continueAutoNote.textContent = 'Choose your next step below (выбери следующий шаг).';
           }
         }, 1000);
 
@@ -2005,7 +2005,7 @@
       function runReview() {
         el.inputHint.textContent = '';
         if (!state.level || !state.mode) {
-          el.setupHint.textContent = 'Pick your level and start mode, then tap “Make it sound better”.';
+          el.setupHint.textContent = 'Pick your level and start mode, then tap “Make it sound better” (выбери уровень и режим, затем нажми кнопку).';
           el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           return;
         }
@@ -2076,8 +2076,8 @@
       function applyModeUI() {
         el.promptContainer.classList.add('is-hidden');
         el.btnNewDaily.classList.add('is-hidden');
-        el.userInput.placeholder = 'Write your answer in English…';
-        el.btnNewDaily.textContent = 'New daily task';
+        el.userInput.placeholder = 'Write your answer in English (напиши свой ответ на английском)…';
+        el.btnNewDaily.textContent = 'New daily task (новое задание)';
 
         if (state.mode === 'own') {
           el.workspaceDesc.textContent =
@@ -2085,17 +2085,17 @@
         } else if (state.mode === 'daily') {
           var item = DAILY_QUESTIONS[state.dailyIndex];
           el.promptContainer.classList.remove('is-hidden');
-          el.promptText.textContent = 'Task:\n' + item.q + '\n\nHint: ' + item.hint;
+          el.promptText.textContent = 'Task (задание):\n' + item.q + '\n\nHint (подсказка): ' + item.hint;
           el.workspaceDesc.textContent = 'Read the task, then write your answer in English.';
           el.btnNewDaily.classList.remove('is-hidden');
-          el.btnNewDaily.textContent = 'New daily task';
+          el.btnNewDaily.textContent = 'New daily task (новое задание)';
         } else if (state.mode === 'scenario') {
           el.promptContainer.classList.remove('is-hidden');
           el.promptText.textContent = buildScenarioPrompt(state.scenarioIndex, state.level);
           el.workspaceDesc.textContent = 'Reply like in a real conversation. Keep it natural and clear.';
           el.btnNewDaily.classList.remove('is-hidden');
-          el.btnNewDaily.textContent = 'New scenario';
-          el.userInput.placeholder = 'Your reply in English…';
+          el.btnNewDaily.textContent = 'New scenario (новый сценарий)';
+          el.userInput.placeholder = 'Your reply in English (твой ответ на английском)…';
         } else if (state.mode === 'mini') {
           el.workspaceDesc.textContent =
             'Do the quick practice below. Then, if you want, add one more sentence and I’ll polish it too.';
