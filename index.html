@@ -235,6 +235,17 @@
       box-shadow: 0 10px 24px rgba(61, 90, 254, 0.3);
     }
 
+    .hero-actions .btn--ghost {
+      opacity: 0.9;
+      border-style: solid;
+      color: var(--text-muted);
+    }
+
+    .hero-actions .btn--ghost:hover {
+      color: var(--accent);
+      opacity: 1;
+    }
+
     .hero-steps {
       display: flex;
       flex-direction: column;
@@ -320,6 +331,12 @@
     .hero-privacy em {
       color: var(--text-muted);
       font-style: normal;
+    }
+
+    .hero-next-example {
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.82rem;
     }
 
     .setup-grid {
@@ -920,16 +937,20 @@
             <button type="button" class="btn btn--primary" id="btn-scroll-setup" aria-controls="setup-card">
               Help me say this better
             </button>
-            <button type="button" class="btn btn--secondary" id="btn-try-example" aria-controls="workspace-card">
-              Try an example
+            <button type="button" class="btn btn--ghost" id="btn-try-example" aria-controls="workspace-card">
+              Show me an example
             </button>
           </div>
 
           <p class="hero-privacy">
             <em>Example</em><br />
-            <strong>I very like this movie</strong> → <strong>I really like this movie</strong><br />
-            See the difference? Let’s try yours 👇
+            <strong id="hero-example-before">I very like this movie</strong> →
+            <strong id="hero-example-after">I really like this movie</strong><br />
+            <span id="hero-example-note">This is how people usually say it. Let’s try yours 👇</span>
           </p>
+          <button type="button" class="btn btn--ghost hero-next-example" id="btn-next-example">
+            Next example
+          </button>
         </div>
 
         <aside class="hero-side" aria-label="What you get">
@@ -1142,6 +1163,14 @@
         },
       ];
 
+      var HERO_EXAMPLES = [
+        { before: 'I very like this movie', after: 'I really like this movie' },
+        { before: 'I have 25 years', after: 'I am 25 years old' },
+        { before: 'Can you explain me this?', after: 'Can you explain this to me?' },
+        { before: 'I go to home at 7', after: 'I go home at 7' },
+        { before: 'I am agree with you', after: 'I agree with you' },
+      ];
+
       /* ========================================================================
          Пулы мини-упражнений: по уровню и по «типу ошибки» для связки с разбором
          ======================================================================== */
@@ -1222,6 +1251,7 @@
         metricAnswerSubmitted: 0,
         metricLoopCompleted: 0,
         loopEligible: false,
+        lastHeroExampleIndex: -1,
       };
 
       /* ========================================================================
@@ -1285,6 +1315,24 @@
         console.log('[metrics]', 'loop_completed =', state.metricLoopCompleted, '| reason:', reason);
       }
 
+      function setRandomHeroExample(fillInput) {
+        if (!HERO_EXAMPLES.length) return;
+        var nextIndex = Math.floor(Math.random() * HERO_EXAMPLES.length);
+        if (HERO_EXAMPLES.length > 1 && nextIndex === state.lastHeroExampleIndex) {
+          nextIndex = (nextIndex + 1) % HERO_EXAMPLES.length;
+        }
+        state.lastHeroExampleIndex = nextIndex;
+        var sample = HERO_EXAMPLES[nextIndex];
+        if (el.heroExampleBefore) el.heroExampleBefore.textContent = sample.before;
+        if (el.heroExampleAfter) el.heroExampleAfter.textContent = sample.after;
+        if (el.heroExampleNote) el.heroExampleNote.textContent = 'This is how people usually say it. Want to try yours?';
+
+        if (fillInput && el.userInput) {
+          el.userInput.value = sample.before;
+          el.userInput.focus();
+        }
+      }
+
       /* ========================================================================
          DOM-элементы
          ======================================================================== */
@@ -1295,6 +1343,11 @@
         btnReview: document.getElementById('btn-review'),
         btnClearInput: document.getElementById('btn-clear-input'),
         btnNewDaily: document.getElementById('btn-new-daily'),
+        btnTryExample: document.getElementById('btn-try-example'),
+        btnNextExample: document.getElementById('btn-next-example'),
+        heroExampleBefore: document.getElementById('hero-example-before'),
+        heroExampleAfter: document.getElementById('hero-example-after'),
+        heroExampleNote: document.getElementById('hero-example-note'),
         reviewLoader: document.getElementById('review-loader'),
         reviewLoaderText: document.getElementById('review-loader-text'),
         promptContainer: document.getElementById('prompt-container'),
@@ -1929,11 +1982,15 @@
       });
 
       document.getElementById('btn-try-example').addEventListener('click', function () {
-        el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        if (el.userInput) {
-          el.userInput.value = 'I very like this movie';
-        }
+        setRandomHeroExample(true);
+        el.workspaceCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
+
+      if (el.btnNextExample) {
+        el.btnNextExample.addEventListener('click', function () {
+          setRandomHeroExample(false);
+        });
+      }
 
       document.querySelectorAll('.chip[data-level]').forEach(function (chip) {
         chip.addEventListener('click', function () {
