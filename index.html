@@ -940,7 +940,7 @@
           </div>
 
           <h2 class="card__title hero-title" id="intro-title">
-            Write your answer in English.<br />Sound natural.
+            Write your answer in English.<br />Sound more natural in English.
           </h2>
 
           <p class="card__subtitle hero-subtitle">
@@ -968,7 +968,7 @@
             </span>
             <span>
               Hi, I’m Alex — your English buddy <span class="hero-wave" aria-hidden="true">👋</span><br />
-              No pressure. Just better English.
+              Practice your English with clear feedback.
             </span>
           </p>
 
@@ -1110,7 +1110,7 @@
           <button type="button" class="btn btn--secondary" id="btn-continue-followup">Answer a follow-up question</button>
           <button type="button" class="btn btn--secondary" id="btn-continue-practice">Practice this mistake again</button>
         </div>
-        <p class="continue-learning__auto" id="continue-auto-note">I’ll suggest the next step in 8s if you pause.</p>
+        <p class="continue-learning__auto" id="continue-auto-note">Choose your next step below.</p>
       </div>
     </section>
 
@@ -1596,7 +1596,7 @@
           clearInterval(state.autoContinueInterval);
           state.autoContinueInterval = null;
         }
-        el.continueAutoNote.textContent = 'Auto-suggestion paused.';
+        el.continueAutoNote.textContent = 'Choose your next step below.';
       }
 
       function setReactionByResult(result) {
@@ -1672,12 +1672,12 @@
       function scheduleAutoContinue() {
         clearAutoContinue();
         var secondsLeft = 8;
-        el.continueAutoNote.textContent = 'I’ll suggest the next step in ' + secondsLeft + 's if you pause.';
+        el.continueAutoNote.textContent = 'Choose your next step below.';
 
         state.autoContinueInterval = setInterval(function () {
           secondsLeft -= 1;
           if (secondsLeft > 0) {
-            el.continueAutoNote.textContent = 'I’ll suggest the next step in ' + secondsLeft + 's if you pause.';
+            el.continueAutoNote.textContent = 'Choose your next step below.';
           }
         }, 1000);
 
