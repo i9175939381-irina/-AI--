@@ -706,46 +706,6 @@
       color: var(--text-muted);
     }
 
-    .debug-metrics {
-      margin-top: 0.9rem;
-      border-top: 1px solid var(--border);
-      padding-top: 0.75rem;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    .debug-metrics details {
-      user-select: none;
-    }
-
-    .debug-metrics summary {
-      cursor: pointer;
-      font-weight: 700;
-      color: var(--text-muted);
-      list-style: none;
-    }
-
-    .debug-metrics summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .debug-metrics__grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-      margin-top: 0.6rem;
-    }
-
-    .debug-metrics__item {
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.6rem 0.7rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 0.8rem;
-      color: var(--text);
-    }
-
     /* ========== Скрытые блоки до появления данных ========== */
     .is-hidden {
       display: none !important;
@@ -1062,15 +1022,6 @@
         Saved on this device. Session counters reset when you refresh.
       </p>
 
-      <div class="debug-metrics" aria-hidden="true">
-        <details>
-          <summary>Debug metrics</summary>
-          <div class="debug-metrics__grid">
-            <div class="debug-metrics__item">answer_submitted: <span id="m-answer-submitted">0</span></div>
-            <div class="debug-metrics__item">loop_completed: <span id="m-loop-completed">0</span></div>
-          </div>
-        </details>
-      </div>
     </section>
   </main>
 
@@ -1243,8 +1194,7 @@
       }
 
       function renderMetrics() {
-        if (el.mAnswerSubmitted) el.mAnswerSubmitted.textContent = String(state.metricAnswerSubmitted);
-        if (el.mLoopCompleted) el.mLoopCompleted.textContent = String(state.metricLoopCompleted);
+        /* UI intentionally hidden: metrics only in code/localStorage/console */
       }
 
       function incMetricAnswerSubmitted() {
@@ -1295,8 +1245,6 @@
         btnContinueFollowup: document.getElementById('btn-continue-followup'),
         btnContinuePractice: document.getElementById('btn-continue-practice'),
         continueAutoNote: document.getElementById('continue-auto-note'),
-        mAnswerSubmitted: document.getElementById('m-answer-submitted'),
-        mLoopCompleted: document.getElementById('m-loop-completed'),
         miniCard: document.getElementById('mini-card'),
         miniQuestion: document.getElementById('mini-question'),
         miniInput: document.getElementById('mini-input'),
