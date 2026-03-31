@@ -209,17 +209,36 @@
     }
 
     .hero-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
-      background: linear-gradient(160deg, #5f7bff, #7f97ff);
-      color: #fff;
-      box-shadow: 0 8px 20px rgba(61, 90, 254, 0.32);
+      background: linear-gradient(160deg, #eff3ff, #ffffff);
+      border: 1px solid #dfe6fb;
+      box-shadow: 0 10px 22px rgba(61, 90, 254, 0.18);
       flex: 0 0 auto;
+    }
+
+    .hero-avatar svg {
+      width: 34px;
+      height: 34px;
+      display: block;
+    }
+
+    .hero-wave {
+      display: inline-block;
+      margin-left: 0.2rem;
+      transform-origin: 70% 70%;
+      animation: alexWave 2.8s ease-in-out infinite;
+    }
+
+    @keyframes alexWave {
+      0%, 70%, 100% { transform: rotate(0deg); }
+      75% { transform: rotate(13deg); }
+      82% { transform: rotate(-8deg); }
+      90% { transform: rotate(10deg); }
     }
 
     .hero-actions {
@@ -930,9 +949,25 @@
           </p>
 
           <p class="hero-persona">
-            <span class="hero-avatar" aria-hidden="true">A</span>
+            <span class="hero-avatar" aria-hidden="true">
+              <svg viewBox="0 0 64 64" role="img" aria-label="Alex avatar">
+                <defs>
+                  <linearGradient id="alexBg" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#6b84ff" />
+                    <stop offset="100%" stop-color="#8ba1ff" />
+                  </linearGradient>
+                </defs>
+                <circle cx="32" cy="32" r="30" fill="url(#alexBg)" />
+                <circle cx="32" cy="28" r="12.5" fill="#ffe0c3" />
+                <path d="M19 25c1-7 6.8-12 13-12s12 5 13 12c-2-1.5-4.5-2.3-7.2-2.3H26.2c-2.7 0-5.2.8-7.2 2.3z" fill="#27325f" />
+                <circle cx="27.5" cy="28.5" r="1.3" fill="#27325f" />
+                <circle cx="36.5" cy="28.5" r="1.3" fill="#27325f" />
+                <path d="M27 33c1.5 1.8 3.2 2.6 5 2.6s3.5-.8 5-2.6" fill="none" stroke="#27325f" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M18 53c2.8-7.4 8-11.5 14-11.5s11.2 4.1 14 11.5" fill="#ffffff" opacity="0.92" />
+              </svg>
+            </span>
             <span>
-              Hi, I’m Alex — your English buddy.<br />
+              Hi, I’m Alex — your English buddy <span class="hero-wave" aria-hidden="true">👋</span><br />
               No pressure. Just better English.
             </span>
           </p>
