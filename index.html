@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FluentBuddy — Your English Practice Coach</title>
+  <title>FluentBuddy — Your English Buddy</title>
   <!--
     ПРИМЕЧАНИЕ ДЛЯ РАЗРАБОТЧИКА (RU):
     Один файл: разметка, стили и логика. Нет внешних зависимостей и сервера.
@@ -175,6 +175,23 @@
     .hero-subtitle {
       margin-bottom: 0.15rem;
       max-width: 52ch;
+    }
+
+    .hero-persona {
+      margin: 1rem 0 1.1rem;
+      padding: 0.8rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin: 0.9rem 0 0.4rem;
     }
 
     .hero-steps {
@@ -838,9 +855,9 @@
     <div class="app-header__inner">
       <div class="app-header__brand">
         <h1 class="app-header__title">FluentBuddy</h1>
-        <p class="app-header__tagline">Friendly English practice — built to feel like a coach.</p>
+        <p class="app-header__tagline">English buddy for natural, everyday phrases.</p>
       </div>
-      <span class="app-header__badge" aria-hidden="true">On-device coach</span>
+      <span class="app-header__badge" aria-hidden="true">Alex is here</span>
     </div>
   </header>
 
@@ -850,64 +867,52 @@
       <div class="hero-grid">
         <div class="hero-copy">
           <div class="intro-highlight" aria-hidden="true">
-            <span class="hero-emoji" aria-hidden="true">🧠</span>
-            Personal feedback, one message at a time
+            <span class="hero-emoji" aria-hidden="true">💬</span>
+            Your friendly English buddy
           </div>
 
           <h2 class="card__title hero-title" id="intro-title">
-            Write in English. Get clear feedback. Improve fast.
+            Say it in English.<br />Sound like a real person.
           </h2>
 
           <p class="card__subtitle hero-subtitle">
-            Choose your level, answer one prompt, and receive an improved version with “why it matters”.
-            Then you’ll practice the same correction in a quick mini drill.
+            Write anything — a message, a thought, a sentence.<br />
+            I’ll help you make it natural, clear and confident.
           </p>
 
-          <div class="hero-steps" aria-label="How it works">
-            <div class="hero-step">
-              <div class="hero-step__icon" aria-hidden="true">✍️</div>
-              <div class="hero-step__text">
-                <strong>Write</strong>
-                <span>Your message in English</span>
-              </div>
-            </div>
-            <div class="hero-step">
-              <div class="hero-step__icon" aria-hidden="true">✅</div>
-              <div class="hero-step__text">
-                <strong>Review</strong>
-                <span>Improvements + key mistakes</span>
-              </div>
-            </div>
-            <div class="hero-step">
-              <div class="hero-step__icon" aria-hidden="true">🎯</div>
-              <div class="hero-step__text">
-                <strong>Practice</strong>
-                <span>A short drill linked to you</span>
-              </div>
-            </div>
+          <p class="hero-persona">
+            Hi, I’m Alex — your English buddy.<br />
+            No pressure. Just better English.
+          </p>
+
+          <div class="hero-actions">
+            <button type="button" class="btn btn--primary" id="btn-scroll-setup" aria-controls="setup-card">
+              Help me say this better
+            </button>
+            <button type="button" class="btn btn--secondary" id="btn-try-example" aria-controls="workspace-card">
+              Try an example
+            </button>
           </div>
 
-          <button type="button" class="btn btn--primary" id="btn-scroll-setup" aria-controls="setup-card">
-            Start my first practice
-          </button>
-
           <p class="hero-privacy">
-            Works fully in your browser — no accounts, no external calls.
+            Example:<br />
+            <strong>I very like this movie</strong> → <strong>I really like this movie</strong><br />
+            See the difference? Let’s try yours 👇
           </p>
         </div>
 
         <aside class="hero-side" aria-label="What you get">
           <div class="side-card">
-            <div class="side-card__title">Improved version</div>
-            <p class="side-card__desc">A cleaner rewrite you can copy right away.</p>
+            <div class="side-card__title">Write it your way</div>
+            <p class="side-card__desc">Use your own sentence. Short or long — both are okay.</p>
           </div>
           <div class="side-card">
-            <div class="side-card__title">Mistakes & why</div>
-            <p class="side-card__desc">Simple explanations that you can actually remember.</p>
+            <div class="side-card__title">Sound natural</div>
+            <p class="side-card__desc">Get a clearer version that feels more like real English.</p>
           </div>
           <div class="side-card">
-            <div class="side-card__title">Better phrasing</div>
-            <p class="side-card__desc">Ready-to-use patterns for the next time.</p>
+            <div class="side-card__title">Keep going</div>
+            <p class="side-card__desc">Practice the same pattern right away so it sticks.</p>
           </div>
         </aside>
       </div>
@@ -915,9 +920,9 @@
 
     <!-- ========== LEVEL + MODE (setup) ========== -->
     <section class="card" id="setup-card" aria-labelledby="setup-title">
-      <h2 class="card__title" id="setup-title">Set up your practice</h2>
+      <h2 class="card__title" id="setup-title">Let’s set this up</h2>
       <p class="card__subtitle">
-        Pick your level and how you want to start. We’ll turn your answer into a helpful correction — then lock it in with a mini drill.
+        Pick your level and how you want to begin. I’ll help you polish your sentence, then we’ll practice it once more.
       </p>
 
       <div class="setup-grid">
@@ -944,11 +949,11 @@
 
     <!-- ========== INPUT AREA ========== -->
     <section class="card" id="workspace-card" aria-labelledby="workspace-title">
-      <h2 class="card__title" id="workspace-title">Your English practice</h2>
-      <p class="card__subtitle" id="workspace-desc">Type your message in English. Then get a clear, friendly review.</p>
+      <h2 class="card__title" id="workspace-title">Your turn ✍️</h2>
+      <p class="card__subtitle" id="workspace-desc">Write your sentence. I’ll help you make it sound natural.</p>
 
       <div id="prompt-container" class="prompt-box is-hidden" aria-live="polite">
-        <strong id="prompt-label">Today’s prompt</strong>
+        <strong id="prompt-label">Try this prompt</strong>
         <span id="prompt-text"></span>
       </div>
 
@@ -956,77 +961,77 @@
       <textarea
         id="user-input"
         class="input-text"
-        placeholder="Type your answer here…"
+        placeholder="Type your sentence here…"
         autocomplete="off"
         spellcheck="true"
       ></textarea>
 
       <div class="btn-row">
-        <button type="button" class="btn btn--primary" id="btn-review" disabled>Get feedback</button>
+        <button type="button" class="btn btn--primary" id="btn-review" disabled>Make it sound better</button>
         <button type="button" class="btn btn--secondary" id="btn-clear-input">Clear</button>
         <button type="button" class="btn btn--ghost" id="btn-new-daily" type="button">New daily prompt</button>
       </div>
       <div class="loader-line" id="review-loader" aria-live="polite">
         <span class="loader-dot" aria-hidden="true"></span>
-        <span id="review-loader-text">Analyzing your sentence…</span>
+        <span id="review-loader-text">Helping you sound natural…</span>
       </div>
       <p class="hint-bar" id="input-hint" role="status"></p>
     </section>
 
     <!-- ========== FEEDBACK / RESULT CARD ========== -->
     <section class="card is-hidden" id="result-card" aria-labelledby="result-title" aria-live="polite">
-      <h2 class="card__title" id="result-title">Tutor feedback</h2>
-      <p class="card__subtitle">An improved version, key mistakes, and better phrasing you can reuse.</p>
+      <h2 class="card__title" id="result-title">Here’s your better version</h2>
+      <p class="card__subtitle">Let’s make your sentence clearer, more natural, and easier to reuse.</p>
       <p class="result-transition-note" id="result-transition-note">Nice! Here’s what I found 👇</p>
-      <div class="reaction-chip" id="result-reaction" aria-live="polite">🙂 Nice try — keep going.</div>
-      <p class="next-step-note" id="next-step-note">Next step: practice the same pattern once more.</p>
+      <div class="reaction-chip" id="result-reaction" aria-live="polite">🙂 Nice try — let’s keep going.</div>
+      <p class="next-step-note" id="next-step-note">Next step: try one more sentence with the same idea.</p>
 
       <div id="result-body">
         <div class="result-section">
-          <h4>Improved version</h4>
+          <h4>Natural version</h4>
           <div class="improved-text" id="out-improved"></div>
         </div>
         <div class="result-section">
-          <h4>Mistakes &amp; why</h4>
+          <h4>What to fix</h4>
           <div id="out-mistakes"></div>
         </div>
         <div class="result-section">
-          <h4>Better phrasing</h4>
+          <h4>Say it this way</h4>
           <p class="phrasing-tip" id="out-phrasing"></p>
         </div>
       </div>
 
       <div class="btn-row" id="continuation-row">
-        <button type="button" class="btn btn--secondary" id="btn-explain-more">Explain the rule</button>
-        <button type="button" class="btn btn--secondary" id="btn-give-example">Show an example</button>
-        <button type="button" class="btn btn--secondary" id="btn-practice-mistake">Practice this correction</button>
+        <button type="button" class="btn btn--secondary" id="btn-explain-more">Why this works</button>
+        <button type="button" class="btn btn--secondary" id="btn-give-example">Show me examples</button>
+        <button type="button" class="btn btn--secondary" id="btn-practice-mistake">Practice this again</button>
       </div>
 
       <div class="continuation-panel" id="panel-explain" role="region" aria-label="Extended explanation"></div>
       <div class="continuation-panel" id="panel-example" role="region" aria-label="Example sentences"></div>
 
       <div class="continue-learning" id="continue-learning-block">
-        <p class="continue-learning__title">Continue learning</p>
-        <p class="continue-learning__hint">Choose your next move, or we’ll continue automatically.</p>
+        <p class="continue-learning__title">Keep going</p>
+        <p class="continue-learning__hint">Pick your next step, or I’ll continue for you.</p>
         <div class="btn-row" id="continue-learning-row">
           <button type="button" class="btn btn--secondary" id="btn-continue-similar">Try another similar sentence</button>
           <button type="button" class="btn btn--secondary" id="btn-continue-followup">Answer a follow-up question</button>
           <button type="button" class="btn btn--secondary" id="btn-continue-practice">Practice this mistake again</button>
         </div>
-        <p class="continue-learning__auto" id="continue-auto-note">Auto-continue in 8s if no action.</p>
+        <p class="continue-learning__auto" id="continue-auto-note">I’ll suggest the next step in 8s if you pause.</p>
       </div>
     </section>
 
     <!-- ========== MINI EXERCISE CARD ========== -->
     <section class="card is-hidden" id="mini-card" aria-labelledby="mini-title">
-      <h2 class="card__title" id="mini-title">Quick mini drill</h2>
-      <p class="card__subtitle" id="mini-desc">One short exercise to lock the correction in.</p>
+      <h2 class="card__title" id="mini-title">Quick practice</h2>
+      <p class="card__subtitle" id="mini-desc">One tiny exercise so the phrase sticks.</p>
       <div class="prompt-box" id="mini-prompt-box">
-        <strong>Exercise</strong>
+        <strong>Practice task</strong>
         <span id="mini-question"></span>
       </div>
       <label for="mini-input" class="visually-hidden">Mini exercise answer</label>
-      <textarea id="mini-input" class="input-text input-text--mini" placeholder="Your answer… (in English)"></textarea>
+      <textarea id="mini-input" class="input-text input-text--mini" placeholder="Your answer in English…"></textarea>
       <div class="btn-row">
         <button type="button" class="btn btn--primary" id="btn-check-mini">Check</button>
         <button type="button" class="btn btn--secondary" id="btn-skip-mini">Not now</button>
@@ -1036,25 +1041,25 @@
 
     <!-- ========== PROGRESS ========== -->
     <section class="card progress-card" id="progress-card" aria-labelledby="progress-title">
-      <h2 class="card__title" id="progress-title" style="width: 100%; margin-bottom: 0">Session progress</h2>
+      <h2 class="card__title" id="progress-title" style="width: 100%; margin-bottom: 0">Your progress</h2>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-session-steps">0</div>
-        <div class="progress-stat__label">Practice runs (this session)</div>
+        <div class="progress-stat__label">Sentences reviewed (this session)</div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-session-ex">0</div>
-        <div class="progress-stat__label">Mini drills completed (this session)</div>
+        <div class="progress-stat__label">Practice tasks completed (this session)</div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-total-steps">0</div>
-        <div class="progress-stat__label">Total practice runs (saved)</div>
+        <div class="progress-stat__label">Total reviews (saved)</div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat__value" id="stat-total-ex">0</div>
-        <div class="progress-stat__label">Total mini drills (saved)</div>
+        <div class="progress-stat__label">Total practice tasks (saved)</div>
       </div>
       <p class="progress-hint">
-        Your level and totals are saved on this device. Session counters reset when you refresh.
+        Saved on this device. Session counters reset when you refresh.
       </p>
 
       <div class="debug-metrics" aria-hidden="true">
@@ -1386,19 +1391,19 @@
           clearInterval(state.autoContinueInterval);
           state.autoContinueInterval = null;
         }
-        el.continueAutoNote.textContent = 'Auto-continue paused.';
+        el.continueAutoNote.textContent = 'Auto-suggestion paused.';
       }
 
       function setReactionByResult(result) {
         var score = result.mistakes.length;
-        var text = '🙂 Nice try — keep going.';
+        var text = '🙂 Nice try — let’s keep going.';
         var cls = 'reaction-chip reaction-chip--try';
 
         if (score <= 1) {
-          text = '🎉 Good — your message is clear.';
+          text = '🎉 Nice — this already sounds clear.';
           cls = 'reaction-chip reaction-chip--good';
         } else if (score <= 3) {
-          text = '👍 Almost there — just a couple of fixes.';
+          text = '👍 Almost there — just a small polish.';
           cls = 'reaction-chip reaction-chip--almost';
         }
 
@@ -1431,7 +1436,7 @@
         state.afterReviewInteracted = true;
         clearAutoContinue();
         el.promptContainer.classList.remove('is-hidden');
-        el.promptText.textContent = 'Try another sentence on the same idea. Keep it short and improve one thing.';
+        el.promptText.textContent = 'Try one more sentence on the same idea. Keep it short and natural.';
         el.userInput.value = '';
         el.userInput.focus();
         el.workspaceCard && el.workspaceCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1446,7 +1451,7 @@
         el.promptText.textContent = q;
         el.userInput.value = '';
         el.userInput.focus();
-        el.nextStepNote.textContent = 'Next step: answer the follow-up question, then get feedback again.';
+        el.nextStepNote.textContent = 'Next step: answer this follow-up, then I’ll polish it with you.';
       }
 
       function startPracticeAgainFlow() {
@@ -1456,18 +1461,18 @@
         if (!state.level) return;
         var task = pickMiniExercise(state.level, state.mistakeTypes);
         showMiniExercise(task, false);
-        el.nextStepNote.textContent = 'Next step: complete the mini drill, then write one more sentence.';
+        el.nextStepNote.textContent = 'Next step: finish this quick practice, then try one fresh sentence.';
       }
 
       function scheduleAutoContinue() {
         clearAutoContinue();
         var secondsLeft = 8;
-        el.continueAutoNote.textContent = 'Auto-continue in ' + secondsLeft + 's if no action.';
+        el.continueAutoNote.textContent = 'I’ll suggest the next step in ' + secondsLeft + 's if you pause.';
 
         state.autoContinueInterval = setInterval(function () {
           secondsLeft -= 1;
           if (secondsLeft > 0) {
-            el.continueAutoNote.textContent = 'Auto-continue in ' + secondsLeft + 's if no action.';
+            el.continueAutoNote.textContent = 'I’ll suggest the next step in ' + secondsLeft + 's if you pause.';
           }
         }, 1000);
 
@@ -1475,7 +1480,7 @@
           if (state.afterReviewInteracted) return;
           clearAutoContinue();
           startFollowUpFlow();
-          el.continueAutoNote.textContent = 'Auto-continued with a follow-up question.';
+          el.continueAutoNote.textContent = 'I picked a follow-up question to keep you moving.';
         }, 8000);
       }
 
@@ -1720,8 +1725,8 @@
         el.miniCard.classList.remove('is-hidden');
         el.miniCard.dataset.answers = JSON.stringify(task.answers);
         el.miniDesc.textContent = fromStandalone
-          ? 'Quick drill — no review needed.'
-          : 'Based on your last review, try this short drill.';
+          ? 'Quick practice — no review needed.'
+          : 'Based on your last sentence, try this quick practice.';
         el.miniCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
@@ -1749,18 +1754,18 @@
           }
         }
         if (ok) {
-          el.miniFeedback.textContent = 'Great! Your answer matches the pattern.';
+          el.miniFeedback.textContent = 'Great — that sounds right.';
           el.miniFeedback.style.color = 'var(--success)';
           addExerciseDone();
           addStep(1);
           markLoopCompleted('mini_exercise_answered_correct');
-          el.nextStepNote.textContent = 'Nice! Next step: answer a follow-up question or try another sentence.';
+          el.nextStepNote.textContent = 'Nice! Next step: answer a follow-up or try your own sentence.';
           state.afterReviewInteracted = false;
           scheduleAutoContinue();
         } else {
-          el.miniFeedback.textContent = 'Close — compare it with the task and try one small revision.';
+          el.miniFeedback.textContent = 'Almost — tweak it once and try again.';
           el.miniFeedback.style.color = 'var(--warning)';
-          el.nextStepNote.textContent = 'Next step: revise this mini drill once more.';
+          el.nextStepNote.textContent = 'Next step: revise this quick practice once more.';
         }
       }
 
@@ -1795,7 +1800,7 @@
       function runReview() {
         el.inputHint.textContent = '';
         if (!state.level || !state.mode) {
-          el.setupHint.textContent = 'Pick your level and start mode, then tap “Get feedback”.';
+          el.setupHint.textContent = 'Pick your level and start mode, then tap “Make it sound better”.';
           el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           return;
         }
@@ -1809,7 +1814,7 @@
         markLoopCompleted('submitted_after_feedback');
 
         /* Мини-loader: имитация «живого анализа» перед выдачей результата */
-        var loaderPhrases = ['Analyzing your sentence…', 'Improving your English…'];
+        var loaderPhrases = ['Helping you sound natural…', 'Polishing your sentence…'];
         var phraseIndex = 0;
         var waitMs = 800 + Math.floor(Math.random() * 701); // 0.8–1.5s
         el.btnReview.disabled = true;
@@ -1835,7 +1840,7 @@
           renderMistakes(result.mistakes);
           el.outPhrasing.textContent = result.phrasing;
           setReactionByResult(result);
-          el.nextStepNote.textContent = 'Next step: choose Continue learning or wait for auto-continue.';
+          el.nextStepNote.textContent = 'Next step: pick how you want to continue.';
 
           resetContinuationUI();
           state.afterReviewInteracted = false;
@@ -1866,20 +1871,20 @@
       function applyModeUI() {
         el.promptContainer.classList.add('is-hidden');
         el.btnNewDaily.classList.add('is-hidden');
-        el.userInput.placeholder = 'Type your answer here…';
+        el.userInput.placeholder = 'Type your sentence here…';
 
         if (state.mode === 'own') {
           el.workspaceDesc.textContent =
-            'Write what you want to say (a message, diary, or a note). Then get a friendly correction.';
+            'Write what you want to say — a message, thought, or short sentence. I’ll help it sound natural.';
         } else if (state.mode === 'daily') {
           var item = DAILY_QUESTIONS[state.dailyIndex];
           el.promptContainer.classList.remove('is-hidden');
           el.promptText.textContent = item.q + ' ' + item.hint;
-          el.workspaceDesc.textContent = 'Answer today’s question in English — simple is fine.';
+          el.workspaceDesc.textContent = 'Answer this prompt in your own words — simple is perfect.';
           el.btnNewDaily.classList.remove('is-hidden');
         } else if (state.mode === 'mini') {
           el.workspaceDesc.textContent =
-            'Do the mini exercise below. If you want, add one short follow-up sentence and get extra feedback.';
+            'Do the quick practice below. Then, if you want, add one more sentence and I’ll polish it too.';
           var pool = MINI_POOL_BY_LEVEL[state.level] || MINI_POOL_BY_LEVEL.intermediate;
           var task = pool[Math.floor(Math.random() * pool.length)];
           el.promptContainer.classList.remove('is-hidden');
@@ -1901,6 +1906,13 @@
          ======================================================================== */
       document.getElementById('btn-scroll-setup').addEventListener('click', function () {
         el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      document.getElementById('btn-try-example').addEventListener('click', function () {
+        el.setupCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el.userInput) {
+          el.userInput.value = 'I very like this movie';
+        }
       });
 
       document.querySelectorAll('.chip[data-level]').forEach(function (chip) {
@@ -1989,7 +2001,7 @@
       el.btnSkipMini.addEventListener('click', function () {
         el.miniCard.classList.add('is-hidden');
         el.miniFeedback.textContent = '';
-        el.nextStepNote.textContent = 'Next step: answer a follow-up question or write another sentence.';
+        el.nextStepNote.textContent = 'Next step: answer a follow-up or write another sentence.';
         state.afterReviewInteracted = false;
         scheduleAutoContinue();
       });
