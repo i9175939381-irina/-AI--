@@ -447,6 +447,10 @@
       color: var(--text);
     }
 
+    .prompt-box span {
+      white-space: pre-line;
+    }
+
     .prompt-box strong {
       display: block;
       margin-bottom: 0.35rem;
@@ -917,11 +921,11 @@
           </div>
 
           <h2 class="card__title hero-title" id="intro-title">
-            Say it in English.<br />Sound natural.
+            Write your answer in English.<br />Sound natural.
           </h2>
 
           <p class="card__subtitle hero-subtitle">
-            Write anything — a message, a thought, a sentence.<br />
+            Write your answer in English — a message, a thought, or a sentence.<br />
             I’ll help you make it natural, clear and confident.
           </p>
 
@@ -992,6 +996,7 @@
           <div id="chip-group-mode" class="chip-group" role="group" aria-labelledby="mode-label">
             <button type="button" class="chip" data-mode="own" aria-pressed="false">Write my own text</button>
             <button type="button" class="chip" data-mode="daily" aria-pressed="false">Daily question</button>
+            <button type="button" class="chip" data-mode="scenario" aria-pressed="false">Scenario practice</button>
             <button type="button" class="chip" data-mode="mini" aria-pressed="false">Mini exercise</button>
           </div>
         </div>
@@ -1013,7 +1018,7 @@
       <textarea
         id="user-input"
         class="input-text"
-        placeholder="Type your sentence here…"
+        placeholder="Write your answer in English…"
         autocomplete="off"
         spellcheck="true"
       ></textarea>
@@ -1163,6 +1168,27 @@
         },
       ];
 
+      var SCENARIO_TASKS = [
+        {
+          context: 'You’re having tea on a veranda. The weather is beautiful.',
+          dialogue:
+            '“I’ve set the tea table outside. It’s such a lovely day.\nDo you have time to join me for tea?”',
+          instruction: 'Your reply: Write a warm, natural response in 1–2 sentences.',
+        },
+        {
+          context: 'Your colleague asks if you can join a short call in 15 minutes.',
+          dialogue:
+            '“Hey, are you free for a quick call in 15 minutes?\nI need your input before I send this draft.”',
+          instruction: 'Your reply: Answer politely and clearly.',
+        },
+        {
+          context: 'A friend invites you to a weekend hike.',
+          dialogue:
+            '“We’re planning a morning hike on Saturday.\nWant to come with us?”',
+          instruction: 'Your reply: Accept or decline politely, with a reason.',
+        },
+      ];
+
       var HERO_EXAMPLES = [
         { before: 'I very like this movie', after: 'I really like this movie' },
         { before: 'I have 25 years', after: 'I am 25 years old' },
@@ -1252,6 +1278,7 @@
         metricLoopCompleted: 0,
         loopEligible: false,
         lastHeroExampleIndex: -1,
+        scenarioIndex: 0,
       };
 
       /* ========================================================================
@@ -1331,6 +1358,18 @@
           el.userInput.value = sample.before;
           el.userInput.focus();
         }
+      }
+
+      function buildScenarioPrompt(idx) {
+        var s = SCENARIO_TASKS[idx % SCENARIO_TASKS.length];
+        return (
+          'Scenario:\n' +
+          s.context +
+          '\n\n' +
+          s.dialogue +
+          '\n\n' +
+          s.instruction
+        );
       }
 
       /* ========================================================================
@@ -1944,17 +1983,26 @@
       function applyModeUI() {
         el.promptContainer.classList.add('is-hidden');
         el.btnNewDaily.classList.add('is-hidden');
-        el.userInput.placeholder = 'Type your sentence here…';
+        el.userInput.placeholder = 'Write your answer in English…';
+        el.btnNewDaily.textContent = 'New daily task';
 
         if (state.mode === 'own') {
           el.workspaceDesc.textContent =
-            'Write what you want to say — a message, thought, or short sentence. I’ll help it sound natural.';
+            'Write your answer in English. I’ll help it sound more natural.';
         } else if (state.mode === 'daily') {
           var item = DAILY_QUESTIONS[state.dailyIndex];
           el.promptContainer.classList.remove('is-hidden');
-          el.promptText.textContent = item.q + ' ' + item.hint;
-          el.workspaceDesc.textContent = 'Answer this prompt in your own words — simple is perfect.';
+          el.promptText.textContent = 'Task:\n' + item.q + '\n\nHint: ' + item.hint;
+          el.workspaceDesc.textContent = 'Read the task, then write your answer in English.';
           el.btnNewDaily.classList.remove('is-hidden');
+          el.btnNewDaily.textContent = 'New daily task';
+        } else if (state.mode === 'scenario') {
+          el.promptContainer.classList.remove('is-hidden');
+          el.promptText.textContent = buildScenarioPrompt(state.scenarioIndex);
+          el.workspaceDesc.textContent = 'Reply like in a real conversation. Keep it natural and clear.';
+          el.btnNewDaily.classList.remove('is-hidden');
+          el.btnNewDaily.textContent = 'New scenario';
+          el.userInput.placeholder = 'Your reply in English…';
         } else if (state.mode === 'mini') {
           el.workspaceDesc.textContent =
             'Do the quick practice below. Then, if you want, add one more sentence and I’ll polish it too.';
@@ -2024,8 +2072,12 @@
       });
 
       el.btnNewDaily.addEventListener('click', function () {
-        state.dailyIndex = (state.dailyIndex + 1) % DAILY_QUESTIONS.length;
-        saveDailyIndex();
+        if (state.mode === 'scenario') {
+          state.scenarioIndex = (state.scenarioIndex + 1) % SCENARIO_TASKS.length;
+        } else {
+          state.dailyIndex = (state.dailyIndex + 1) % DAILY_QUESTIONS.length;
+          saveDailyIndex();
+        }
         applyModeUI();
       });
 
