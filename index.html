@@ -1205,22 +1205,74 @@
 
       var SCENARIO_TASKS = [
         {
-          context: 'You’re having tea on a veranda. The weather is beautiful.',
-          dialogue:
-            '“I’ve set the tea table outside. It’s such a lovely day.\nDo you have time to join me for tea?”',
-          instruction: 'Your reply: Write a warm, natural response in 1–2 sentences.',
+          level: 'beginner',
+          title: 'In a park',
+          description: 'You are sitting on a bench and watching people walk their dogs.\nIt feels calm and sunny.',
+          situation: 'A person smiles and asks if this seat is free.',
+          task: 'Task: Answer politely in 1–2 short lines.',
         },
         {
-          context: 'Your colleague asks if you can join a short call in 15 minutes.',
-          dialogue:
-            '“Hey, are you free for a quick call in 15 minutes?\nI need your input before I send this draft.”',
-          instruction: 'Your reply: Answer politely and clearly.',
+          level: 'beginner',
+          title: 'In a cafe',
+          description: 'You are ordering coffee and a snack.\nThe place is busy but friendly.',
+          situation: 'The barista asks: “Would you like to sit here or take away?”',
+          task: 'Task: Reply and ask one simple follow-up question.',
         },
         {
-          context: 'A friend invites you to a weekend hike.',
-          dialogue:
-            '“We’re planning a morning hike on Saturday.\nWant to come with us?”',
-          instruction: 'Your reply: Accept or decline politely, with a reason.',
+          level: 'beginner',
+          title: 'On public transport',
+          description: 'You are on a bus and not sure where to get off.\nYour stop might be next.',
+          situation: 'You want to ask someone nearby for help.',
+          task: 'Task: Write what you would ask in 1 line.',
+        },
+        {
+          level: 'intermediate',
+          title: 'At the library',
+          description: 'You are looking for a book for your English class.\nThe shelves are full and quiet.',
+          situation: 'The librarian says: “What kind of book are you looking for?”',
+          task: 'Task: Answer and ask for one recommendation.',
+        },
+        {
+          level: 'intermediate',
+          title: 'At the airport',
+          description: 'Your flight is delayed and you need updated information.\nYou are at the help desk.',
+          situation: 'The staff member asks for your flight number.',
+          task: 'Task: Continue the dialogue in 2 short replies.',
+        },
+        {
+          level: 'intermediate',
+          title: 'Meeting a new person',
+          description: 'You are at a small meetup.\nSomeone introduces themselves to you.',
+          situation: '“Hi, I’m Daniel. Is this your first time here?”',
+          task: 'Task: Reply naturally and ask one friendly question.',
+        },
+        {
+          level: 'intermediate',
+          title: 'Asking for help',
+          description: 'You cannot find a meeting room in an office building.\nA staff member passes by.',
+          situation: 'You need directions quickly but politely.',
+          task: 'Task: Write 2 lines: ask for help + thank them.',
+        },
+        {
+          level: 'advanced',
+          title: 'Small talk before a meeting',
+          description: 'You are waiting for a client call to start.\nYou have 2 minutes for light conversation.',
+          situation: 'You want to sound warm but professional.',
+          task: 'Task: Write 2–3 short lines of natural small talk.',
+        },
+        {
+          level: 'advanced',
+          title: 'On a train with a stranger',
+          description: 'A traveler asks if this train stops at the central station.\nYou know the route well.',
+          situation: 'You want to help clearly and kindly.',
+          task: 'Task: Explain the stop and ask a friendly follow-up question.',
+        },
+        {
+          level: 'advanced',
+          title: 'At a cafe with a colleague',
+          description: 'You are discussing weekend plans over coffee.\nThe conversation is relaxed.',
+          situation: 'Your colleague says: “I might go hiking, not sure yet.”',
+          task: 'Task: Respond naturally and keep the conversation going in 2 lines.',
         },
       ];
 
@@ -1395,15 +1447,21 @@
         }
       }
 
-      function buildScenarioPrompt(idx) {
-        var s = SCENARIO_TASKS[idx % SCENARIO_TASKS.length];
+      function getScenarioPool(level) {
+        var filtered = SCENARIO_TASKS.filter(function (s) {
+          return s.level === level;
+        });
+        return filtered.length ? filtered : SCENARIO_TASKS;
+      }
+
+      function buildScenarioPrompt(idx, level) {
+        var pool = getScenarioPool(level);
+        var s = pool[idx % pool.length];
         return (
-          'Scenario:\n' +
-          s.context +
-          '\n\n' +
-          s.dialogue +
-          '\n\n' +
-          s.instruction
+          'Scenario: ' + s.title + '\n\n' +
+          s.description + '\n\n' +
+          'Situation:\n' + s.situation + '\n\n' +
+          s.task
         );
       }
 
@@ -2033,7 +2091,7 @@
           el.btnNewDaily.textContent = 'New daily task';
         } else if (state.mode === 'scenario') {
           el.promptContainer.classList.remove('is-hidden');
-          el.promptText.textContent = buildScenarioPrompt(state.scenarioIndex);
+          el.promptText.textContent = buildScenarioPrompt(state.scenarioIndex, state.level);
           el.workspaceDesc.textContent = 'Reply like in a real conversation. Keep it natural and clear.';
           el.btnNewDaily.classList.remove('is-hidden');
           el.btnNewDaily.textContent = 'New scenario';
@@ -2090,6 +2148,10 @@
       document.querySelectorAll('.chip[data-mode]').forEach(function (chip) {
         chip.addEventListener('click', function () {
           state.mode = chip.getAttribute('data-mode');
+          if (state.mode === 'scenario') {
+            var pool = getScenarioPool(state.level);
+            state.scenarioIndex = Math.floor(Math.random() * pool.length);
+          }
           setChipActive('#chip-group-mode', 'data-mode', state.mode);
           saveMode();
           updateReviewButtonState();
@@ -2108,7 +2170,8 @@
 
       el.btnNewDaily.addEventListener('click', function () {
         if (state.mode === 'scenario') {
-          state.scenarioIndex = (state.scenarioIndex + 1) % SCENARIO_TASKS.length;
+          var pool = getScenarioPool(state.level);
+          state.scenarioIndex = (state.scenarioIndex + 1) % pool.length;
         } else {
           state.dailyIndex = (state.dailyIndex + 1) % DAILY_QUESTIONS.length;
           saveDailyIndex();
